@@ -1,17 +1,18 @@
 import 'dart:io';
-import 'package:cab_driver/screens/loading.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import 'loading.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
-import 'package:cab_driver/widgets/ComingSoon.dart';
+import '../brand_colors.dart';
+import '../globalvaribles.dart';
+import 'mainpage.dart';
+import '../widgets/TaxiButton.dart';
+import '../widgets/ComingSoon.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cab_driver/screens/profilePic.dart';
+import 'profilePic.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
@@ -167,7 +168,10 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
   // Choose profile image function
   Future<void> _choosedImage() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    // PickedFile pickedFile = await imagePicker.getImage(
+    //   source: ImageSource.gallery,
+    // );
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
@@ -180,7 +184,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
   // Choose identification file function
   Future<void> _choosedIdent() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
@@ -193,7 +197,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
   // Choose certificate image function
   Future<void> _choosedCert() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
@@ -208,8 +212,10 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
   Future<void> _uploadImage() async {
     // Create a unique filename for image
     String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
-    final Reference storageReference =
-        FirebaseStorage.instance.ref().child('Images').child(imageFileName);
+    final Reference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('${currentDoctorInfo.email}/Images')
+        .child(imageFileName);
     final UploadTask uploadTask = storageReference.putFile(_imageFile);
     await uploadTask.then((TaskSnapshot taskSnapshot) {
       taskSnapshot.ref.getDownloadURL().then((imageUrl) {
@@ -232,7 +238,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
     String identFileName = DateTime.now().microsecondsSinceEpoch.toString();
     final Reference storageReference = FirebaseStorage.instance
         .ref()
-        .child('Identifications')
+        .child('${currentDoctorInfo.email}/Identification')
         .child(identFileName);
     final UploadTask uploadTask = storageReference.putFile(_identFile);
     await uploadTask.then((TaskSnapshot taskSnapshot) {
@@ -256,7 +262,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
     String certFileName = DateTime.now().microsecondsSinceEpoch.toString();
     final Reference storageReference = FirebaseStorage.instance
         .ref()
-        .child('Certificates')
+        .child('${currentDoctorInfo.email}/Certificates')
         .child(certFileName);
     final UploadTask uploadTask = storageReference.putFile(_certFile);
     await uploadTask.then((TaskSnapshot taskSnapshot) {
@@ -319,7 +325,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                top: 15, right: 15, left: 15, bottom: 15),
+                                top: 15, right: 10, left: 15, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -336,7 +342,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                       : '${identName}',
                                   style: TextStyle(
                                     color: Colors.green,
-                                    fontSize: 20,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 Container()
@@ -528,7 +534,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                top: 15, right: 15, left: 15, bottom: 15),
+                                top: 15, right: 10, left: 15, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -545,7 +551,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                       : '${certName}',
                                   style: TextStyle(
                                     color: Colors.green,
-                                    fontSize: 20,
+                                    fontSize: 10,
                                   ),
                                 ),
                                 Container()

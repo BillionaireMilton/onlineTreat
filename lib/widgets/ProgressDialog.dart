@@ -1,4 +1,4 @@
-import 'package:cab_driver/brand_colors.dart';
+import '../brand_colors.dart';
 import 'package:flutter/material.dart';
 
 class ProgressDialog extends StatelessWidget {
@@ -27,11 +27,11 @@ class ProgressDialog extends StatelessWidget {
                     AlwaysStoppedAnimation<Color>(BrandColors.colorAccent),
               ),
               SizedBox(
-                width: 25.0,
+                width: 20.0,
               ),
               Text(
                 status,
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 10),
               ),
             ],
           ),

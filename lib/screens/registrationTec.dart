@@ -1,7 +1,7 @@
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import '../globalvaribles.dart';
+import '../screens/login.dart';
+import '../screens/mainpage.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -83,7 +83,7 @@ class _RegistrationTecPageState extends State<RegistrationTecPage> {
       String date = dateFormat.format(DateTime.now()).toString();
       String time = timeFormat.format(DateTime.now()).toString();
       DatabaseReference newUserRef =
-          FirebaseDatabase.instance.reference().child('tec/${user.uid}');
+          FirebaseDatabase.instance.reference().child('tecs/${user.uid}');
 
       Map userMap = {
         'fullName': fullNameController.text,

@@ -1,6 +1,6 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
-import 'package:cab_driver/widgets/TaxiOutlineButton.dart';
+import '../brand_colors.dart';
+import '../widgets/TaxiButton.dart';
+import '../widgets/TaxiOutlineButton.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmSheet extends StatelessWidget {

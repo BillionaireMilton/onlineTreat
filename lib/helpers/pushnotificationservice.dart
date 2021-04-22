@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:cab_driver/datamodels/tripdetails.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/widgets/NotificationDialog.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import '../datamodels/treatmentdetails.dart';
+import '../globalvaribles.dart';
+import '../widgets/NotificationDialog.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,13 +17,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //   Future initialize(context) async {
 //     fcm.configure(
 //       onMessage: (Map<String, dynamic> message) async {
-//         fetchRideInfo(getRideID(message), context);
+//         fetchTreatmentInfo(getTreatmentID(message), context);
 //       },
 //       onLaunch: (Map<String, dynamic> message) async {
-//         fetchRideInfo(getRideID(message), context);
+//         fetchTreatmentInfo(getTreatmentID(message), context);
 //       },
 //       onResume: (Map<String, dynamic> message) async {
-//         fetchRideInfo(getRideID(message), context);
+//         fetchTreatmentInfo(getTreatmentID(message), context);
 //       },
 //     );
 //   }
@@ -41,20 +41,20 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //     fcm.subscribeToTopic('allusers');
 //   }
 //
-//   String getRideID(Map<String, dynamic> message) {
-//     String rideID = '';
+//   String getTreatmentID(Map<String, dynamic> message) {
+//     String treatmentID = '';
 //
 //     if (Platform.isAndroid) {
-//       rideID = message['data']['ride_id'];
+//       treatmentID = message['data']['treatment_id'];
 //       // print("onResume: $message");
 //     } else {
-//       rideID = message['ride_id'];
-//       print('ride_id: $rideID');
+//       treatmentID = message['treatment_id'];
+//       print('treatment_id: $treatmentID');
 //     }
-//     return rideID;
+//     return treatmentID;
 //   }
 //
-//   void fetchRideInfo(String rideID, context) {
+//   void fetchTreatmentInfo(String treatmentID, context) {
 //     //Show please wait dialog
 //     showDialog(
 //       barrierDismissible: false,
@@ -64,9 +64,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //       ),
 //     );
 //
-//     DatabaseReference rideRef =
-//         FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
-//     rideRef.once().then((DataSnapshot snapshot) {
+//     DatabaseReference treatmentRef =
+//         FirebaseDatabase.instance.reference().child('treatmentRequest/$treatmentID');
+//     treatmentRef.once().then((DataSnapshot snapshot) {
 //       Navigator.pop(context);
 //
 //       if (snapshot.value != null) {
@@ -89,20 +89,20 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 //         String destinationAddress = snapshot.value['destination_address'];
 //         String paymentMethod = snapshot.value['payment_method'];
 //
-//         TripDetails tripDetails = TripDetails();
+//         TreatmentDetails treatmentDetails = TreatmentDetails();
 //
-//         tripDetails.rideID = rideID;
-//         tripDetails.pickupAddress = pickupAddress;
-//         tripDetails.destinationAddress = destinationAddress;
-//         tripDetails.pickup = LatLng(pickupLat, pickupLng);
-//         tripDetails.destination = LatLng(destinationLat, destinationLng);
-//         tripDetails.paymentMethod = paymentMethod;
+//         treatmentDetails.treatmentID = treatmentID;
+//         treatmentDetails.pickupAddress = pickupAddress;
+//         treatmentDetails.destinationAddress = destinationAddress;
+//         treatmentDetails.pickup = LatLng(pickupLat, pickupLng);
+//         treatmentDetails.destination = LatLng(destinationLat, destinationLng);
+//         treatmentDetails.paymentMethod = paymentMethod;
 //
 //         showDialog(
 //           context: context,
 //           barrierDismissible: false,
 //           builder: (BuildContext context) => NotificationDialog(
-//             tripDetails: tripDetails,
+//             treatmentDetails: treatmentDetails,
 //           ),
 //         );
 //       }
@@ -119,13 +119,13 @@ class PushNotificationService {
 
     fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
-        fetchRideInfo(getRideID(message), context);
+        fetchTreatmentInfo(getTreatmentID(message), context);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        fetchRideInfo(getRideID(message), context);
+        fetchTreatmentInfo(getTreatmentID(message), context);
       },
       onResume: (Map<String, dynamic> message) async {
-        fetchRideInfo(getRideID(message), context);
+        fetchTreatmentInfo(getTreatmentID(message), context);
       },
     );
   }
@@ -143,20 +143,20 @@ class PushNotificationService {
     fcm.subscribeToTopic('allusers');
   }
 
-  String getRideID(Map<String, dynamic> message) {
-    String rideID = '';
+  String getTreatmentID(Map<String, dynamic> message) {
+    String treatmentID = '';
 
     if (Platform.isAndroid) {
-      rideID = message['data']['ride_id'];
+      treatmentID = message['data']['treatment_id'];
     } else {
-      rideID = message['ride_id'];
-      print('ride_id: $rideID');
+      treatmentID = message['treatment_id'];
+      print('treatment_id: $treatmentID');
     }
 
-    return rideID;
+    return treatmentID;
   }
 
-  void fetchRideInfo(String rideID, context) {
+  void fetchTreatmentInfo(String treatmentID, context) {
     //show please wait dialog
     showDialog(
       barrierDismissible: false,
@@ -166,9 +166,10 @@ class PushNotificationService {
       ),
     );
 
-    DatabaseReference rideRef =
-        FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
-    rideRef.once().then((DataSnapshot snapshot) {
+    DatabaseReference treatmentRef = FirebaseDatabase.instance
+        .reference()
+        .child('treatmentRequest/$treatmentID');
+    treatmentRef.once().then((DataSnapshot snapshot) {
       Navigator.pop(context);
 
       if (snapshot.value != null) {
@@ -183,31 +184,31 @@ class PushNotificationService {
             double.parse(snapshot.value['location']['longitude'].toString());
         String pickupAddress = snapshot.value['pickup_address'].toString();
 
-        double destinationLat =
-            double.parse(snapshot.value['destination']['latitude'].toString());
-        double destinationLng =
-            double.parse(snapshot.value['destination']['longitude'].toString());
-        String destinationAddress = snapshot.value['destination_address'];
+        // double destinationLat =
+        //     double.parse(snapshot.value['destination']['latitude'].toString());
+        // double destinationLng =
+        //     double.parse(snapshot.value['destination']['longitude'].toString());
+        // String destinationAddress = snapshot.value['destination_address'];
         String paymentMethod = snapshot.value['payment_method'];
-        String riderName = snapshot.value['rider_name'];
-        String riderPhone = snapshot.value['rider_phone'];
+        String ownerName = snapshot.value['owner_name'];
+        String ownerPhone = snapshot.value['owner_phone'];
 
-        TripDetails tripDetails = TripDetails();
+        TreatmentDetails treatmentDetails = TreatmentDetails();
 
-        tripDetails.rideID = rideID;
-        tripDetails.pickupAddress = pickupAddress;
-        tripDetails.destinationAddress = destinationAddress;
-        tripDetails.pickup = LatLng(pickupLat, pickupLng);
-        tripDetails.destination = LatLng(destinationLat, destinationLng);
-        tripDetails.paymentMethod = paymentMethod;
-        tripDetails.riderName = riderName;
-        tripDetails.riderPhone = riderPhone;
+        treatmentDetails.treatmentID = treatmentID;
+        treatmentDetails.pickupAddress = pickupAddress;
+        //treatmentDetails.destinationAddress = destinationAddress;
+        treatmentDetails.pickup = LatLng(pickupLat, pickupLng);
+        //treatmentDetails.destination = LatLng(destinationLat, destinationLng);
+        treatmentDetails.paymentMethod = paymentMethod;
+        treatmentDetails.ownerName = ownerName;
+        treatmentDetails.ownerPhone = ownerPhone;
 
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) => NotificationDialog(
-            tripDetails: tripDetails,
+            treatmentDetails: treatmentDetails,
           ),
         );
       }

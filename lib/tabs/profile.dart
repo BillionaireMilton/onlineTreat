@@ -1,18 +1,18 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/history.dart';
-import 'package:cab_driver/dataprovider.dart';
-import 'package:cab_driver/screens/historypage.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
+import '../brand_colors.dart';
+import '../datamodels/history.dart';
+import '../dataprovider.dart';
+import '../screens/historypage.dart';
+import '../screens/mainpage.dart';
+import '../widgets/BrandDivier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/directiondetails.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../brand_colors.dart';
+import '../datamodels/directiondetails.dart';
+import '../globalvaribles.dart';
+import '../widgets/BrandDivier.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +26,7 @@ import 'package:http/http.dart';
 import 'dart:async';
 import 'package:outline_material_icons/outline_material_icons.dart';
 import 'dart:io';
-import 'package:cab_driver/helpers/helpermethods.dart';
+import '../helpers/helpermethods.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -41,38 +41,38 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-  double searchSheetHeight = (Platform.isIOS) ? 300 : 230;
-  double rideDetailsSheetHeight = 0; // (Platform.isAndroid) ? 235 : 260
-  double requestingSheetHeight = 0; // (Platform.isAndroid) ? 195 : 220
-  double tripSheetHeight = 0; // (Platform.isAndroid) ? 275 : 300
+  // double searchSheetHeight = (Platform.isIOS) ? 300 : 230;
+  // double treatmentDetailsSheetHeight = 0; // (Platform.isAndroid) ? 235 : 260
+  // double requestingSheetHeight = 0; // (Platform.isAndroid) ? 195 : 220
+  // double treatmentSheetHeight = 0; // (Platform.isAndroid) ? 275 : 300
 
-  Completer<GoogleMapController> _controller = Completer();
-  GoogleMapController mapController;
-  double mapBottomPadding = 0;
+  // Completer<GoogleMapController> _controller = Completer();
+  // GoogleMapController mapController;
+  // double mapBottomPadding = 0;
 
-  List<LatLng> polylineCoordinates = [];
-  Set<Polyline> _polylines = {};
-  Set<Marker> _Markers = {};
-  Set<Circle> _Circles = {};
+  // List<LatLng> polylineCoordinates = [];
+  // Set<Polyline> _polylines = {};
+  // Set<Marker> _Markers = {};
+  // Set<Circle> _Circles = {};
 
   final FirebaseAuth auth = FirebaseAuth.instance;
-  BitmapDescriptor nearbyIcon;
+  // BitmapDescriptor nearbyIcon;
 
   var geoLocator = Geolocator();
   Position currentPosition;
-  DirectionDetails tripDirectionDetails;
+  // DirectionDetails treatmentDirectionDetails;
 
   String appState = 'NORMAL';
 
-  bool drawerCanOpen = true;
+  // bool drawerCanOpen = true;
 
-  DatabaseReference rideRef;
+  DatabaseReference treatmentRef;
 
-  StreamSubscription<Event> rideSubscription;
+  // StreamSubscription<Event> treatmentSubscription;
 
-  bool nearbyDoctorsKeysLoaded = false;
+  // bool nearbyDoctorsKeysLoaded = false;
 
-  bool isRequestingLocationDetails = false;
+  // bool isRequestingLocationDetails = false;
 
   // void setupPositionLocator() async {
   //   Position position = await Geolocator.getCurrentPosition(
@@ -86,50 +86,50 @@ class _ProfilePageState extends State<ProfilePage>
   //   //startGeofireListener();
   // }
 
-  void showDetailSheet() async {
-    //await getDirection();
+  // void showDetailSheet() async {
+  //   //await getDirection();
 
-    setState(() {
-      searchSheetHeight = 0;
-      mapBottomPadding = (Platform.isAndroid) ? 240 : 230;
-      rideDetailsSheetHeight = (Platform.isAndroid) ? 235 : 260;
-      drawerCanOpen = false;
-    });
-  }
+  //   setState(() {
+  //     searchSheetHeight = 0;
+  //     mapBottomPadding = (Platform.isAndroid) ? 240 : 230;
+  //     treatmentDetailsSheetHeight = (Platform.isAndroid) ? 235 : 260;
+  //     drawerCanOpen = false;
+  //   });
+  // }
 
-  void showRequestingSheet() {
-    setState(() {
-      rideDetailsSheetHeight = 0;
-      requestingSheetHeight = (Platform.isAndroid) ? 195 : 220;
-      mapBottomPadding = (Platform.isAndroid) ? 200 : 190;
-      drawerCanOpen = true;
-    });
+  // void showRequestingSheet() {
+  //   setState(() {
+  //     treatmentDetailsSheetHeight = 0;
+  //     requestingSheetHeight = (Platform.isAndroid) ? 195 : 220;
+  //     mapBottomPadding = (Platform.isAndroid) ? 200 : 190;
+  //     drawerCanOpen = true;
+  //   });
 
-    //createRideRequest();
-  }
+  //   //createtreatmentRequest();
+  // }
 
-  showTripSheet() {
-    setState(() {
-      requestingSheetHeight = 0;
-      tripSheetHeight = (Platform.isAndroid) ? 275 : 300;
-      mapBottomPadding = (Platform.isAndroid) ? 280 : 270;
-    });
-  }
+  // showTreatmentSheet() {
+  //   setState(() {
+  //     requestingSheetHeight = 0;
+  //     treatmentSheetHeight = (Platform.isAndroid) ? 275 : 300;
+  //     mapBottomPadding = (Platform.isAndroid) ? 280 : 270;
+  //   });
+  // }
 
-  void createMarker() {
-    if (nearbyIcon == null) {
-      ImageConfiguration imageConfiguration =
-          createLocalImageConfiguration(context, size: Size(2, 2));
-      BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              (Platform.isIOS)
-                  ? 'images/car_ios.png'
-                  : 'images/car_android.png')
-          .then((icon) {
-        nearbyIcon = icon;
-      });
-    }
-  }
+  // void createMarker() {
+  //   if (nearbyIcon == null) {
+  //     ImageConfiguration imageConfiguration =
+  //         createLocalImageConfiguration(context, size: Size(2, 2));
+  //     BitmapDescriptor.fromAssetImage(
+  //             imageConfiguration,
+  //             (Platform.isIOS)
+  //                 ? 'images/car_ios.png'
+  //                 : 'images/car_android.png')
+  //         .then((icon) {
+  //       nearbyIcon = icon;
+  //     });
+  //   }
+  // }
 
   void getCurrentPosition() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -151,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    createMarker();
+    //createMarker();
 
     return Scaffold(
       key: scaffoldKey,
@@ -300,6 +300,8 @@ class _ProfilePageState extends State<ProfilePage>
                                                         .pickupAddress
                                                         .placeName
                                                     : "Your Current Location",
+                                                style: TextStyle(),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ],
                                           ),
@@ -389,30 +391,33 @@ class _ProfilePageState extends State<ProfilePage>
                 // ),
                 Card(
                   child: Container(
-                    height: 70,
+                    //height: 70,
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Container(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Treatments',
-                                  style: TextStyle(
-                                      color: Colors.grey[400], fontSize: 14.0),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  '0',
-                                  style: TextStyle(
-                                    fontSize: 15.0,
+                          Expanded(
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Treatments',
+                                    style: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 14.0),
                                   ),
-                                )
-                              ],
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  Text(
+                                    '0',
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                           // Container(
@@ -433,44 +438,50 @@ class _ProfilePageState extends State<ProfilePage>
                           //     )
                           //   ]),
                           // ),
-                          Container(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Date of Birth',
-                                  style: TextStyle(
-                                      color: Colors.grey[400], fontSize: 14.0),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  currentDoctorInfo?.dob ?? "dob",
-                                  style: TextStyle(
-                                    fontSize: 15.0,
+                          Expanded(
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Date of Birth',
+                                    style: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 14.0),
                                   ),
-                                )
-                              ],
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  Text(
+                                    currentDoctorInfo?.dob ?? "dob",
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                          Container(
-                            child: Column(
-                              children: [
-                                Text(
-                                  'Gender',
-                                  style: TextStyle(
-                                      color: Colors.grey[400], fontSize: 14.0),
-                                ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                                Text(
-                                  currentDoctorInfo?.gender ?? "gender here",
-                                  style: TextStyle(
-                                    fontSize: 15.0,
+                          Expanded(
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Gender',
+                                    style: TextStyle(
+                                        color: Colors.grey[400],
+                                        fontSize: 14.0),
                                   ),
-                                )
-                              ],
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  Text(
+                                    currentDoctorInfo?.gender ?? "gender here",
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ],

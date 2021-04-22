@@ -1,12 +1,12 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/tripdetails.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/screens/newTripPage.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
-import 'package:cab_driver/widgets/TaxiOutlineButton.dart';
+import '../brand_colors.dart';
+import '../datamodels/treatmentdetails.dart';
+import '../globalvaribles.dart';
+import '../helpers/helpermethods.dart';
+import '../screens/newTreatmentPage.dart';
+import '../widgets/BrandDivier.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
+import '../widgets/TaxiOutlineButton.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -37,7 +37,7 @@ import 'package:toast/toast.dart';
 //               height: 16.0,
 //             ),
 //             Text(
-//               'NEW TRIP REQUEST',
+//               'NEW TREATMENT REQUEST',
 //               style: TextStyle(fontFamily: 'Brand-Bold', fontSize: 18),
 //             ),
 //             SizedBox(
@@ -97,9 +97,9 @@ import 'package:toast/toast.dart';
 //   }
 // }
 // class NotificationDialog extends StatelessWidget {
-//   final TripDetails tripDetails;
+//   final TreatmentDetails treatmentDetails;
 //
-//   NotificationDialog({this.tripDetails});
+//   NotificationDialog({this.treatmentDetails});
 //
 //   @override
 //   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ import 'package:toast/toast.dart';
 //               height: 16.0,
 //             ),
 //             Text(
-//               'NEW TRIP REQUEST',
+//               'NEW TREATMENT REQUEST',
 //               style: TextStyle(fontFamily: 'Brand-Bold', fontSize: 18),
 //             ),
 //             SizedBox(
@@ -152,7 +152,7 @@ import 'package:toast/toast.dart';
 //                       Expanded(
 //                         child: Container(
 //                           child: Text(
-//                             tripDetails.pickupAddress,
+//                             treatmentDetails.pickupAddress,
 //                             style: TextStyle(fontSize: 18),
 //                           ),
 //                         ),
@@ -176,7 +176,7 @@ import 'package:toast/toast.dart';
 //                       Expanded(
 //                         child: Container(
 //                           child: Text(
-//                             tripDetails.destinationAddress,
+//                             treatmentDetails.destinationAddress,
 //                             style: TextStyle(fontSize: 18),
 //                           ),
 //                         ),
@@ -247,36 +247,36 @@ import 'package:toast/toast.dart';
 //       ),
 //     );
 //
-//     DatabaseReference newRideRef = FirebaseDatabase.instance
+//     DatabaseReference newTreatmentRef = FirebaseDatabase.instance
 //         .reference()
-//         .child('doctors/${currentFirebaseUser.uid}/newtrip');
-//     newRideRef.once().then((DataSnapshot snapshot) {
+//         .child('doctors/${currentFirebaseUser.uid}/newtreatment');
+//     newTreatmentRef.once().then((DataSnapshot snapshot) {
 //       Navigator.pop(context);
 //
-//       String thisRideID = "";
+//       String thisTreatmentID = "";
 //       if (snapshot.value != null) {
-//         thisRideID = snapshot.value.toString();
+//         thisTreatmentID = snapshot.value.toString();
 //       } else {
-//         print('ride not found');
+//         print('treatment not found');
 //       }
 //
-//       if (thisRideID == tripDetails.rideID) {
-//         newRideRef.set('accepted');
-//       } else if (thisRideID == 'cancelled') {
-//         print('ride has been cancelled');
-//       } else if (thisRideID == 'timeout') {
-//         print('ride has timed out');
+//       if (thisTreatmentID == treatmentDetails.treatmentID) {
+//         newTreatmentRef.set('accepted');
+//       } else if (thisTreatmentID == 'cancelled') {
+//         print('treatment has been cancelled');
+//       } else if (thisTreatmentID == 'timeout') {
+//         print('treatment has timed out');
 //       } else {
-//         print('ride not found');
+//         print('treatment not found');
 //       }
 //     });
 //   }
 // }
 
 class NotificationDialog extends StatelessWidget {
-  final TripDetails tripDetails;
+  final TreatmentDetails treatmentDetails;
 
-  NotificationDialog({this.tripDetails});
+  NotificationDialog({this.treatmentDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +305,7 @@ class NotificationDialog extends StatelessWidget {
               height: 16.0,
             ),
             Text(
-              'NEW TRIP REQUEST',
+              'NEW TREATMENT REQUEST',
               style: TextStyle(fontFamily: 'Brand-Bold', fontSize: 18),
             ),
             SizedBox(
@@ -329,7 +329,7 @@ class NotificationDialog extends StatelessWidget {
                       Expanded(
                           child: Container(
                               child: Text(
-                        tripDetails.pickupAddress,
+                        treatmentDetails.pickupAddress,
                         style: TextStyle(fontSize: 18),
                       )))
                     ],
@@ -351,7 +351,8 @@ class NotificationDialog extends StatelessWidget {
                       Expanded(
                           child: Container(
                               child: Text(
-                        tripDetails.destinationAddress,
+                        'petAmbulance',
+                        // treatmentDetails.destinationAddress,
                         style: TextStyle(fontSize: 18),
                       )))
                     ],
@@ -420,43 +421,43 @@ class NotificationDialog extends StatelessWidget {
       ),
     );
 
-    DatabaseReference newRideRef = FirebaseDatabase.instance
+    DatabaseReference newTreatmentRef = FirebaseDatabase.instance
         .reference()
-        .child('doctors/${currentFirebaseUser.uid}/newtrip');
-    newRideRef.once().then((DataSnapshot snapshot) {
+        .child('doctors/${currentFirebaseUser.uid}/newtreatment');
+    newTreatmentRef.once().then((DataSnapshot snapshot) {
       Navigator.pop(context);
       Navigator.pop(context);
 
-      String thisRideID = "";
+      String thisTreatmentID = "";
       if (snapshot.value != null) {
-        thisRideID = snapshot.value.toString();
+        thisTreatmentID = snapshot.value.toString();
       } else {
-        Toast.show("Ride not found", context,
+        Toast.show("Treatment not found", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-        print('ride not found');
+        print('treatment not found');
       }
 
-      if (thisRideID == tripDetails.rideID) {
-        newRideRef.set('accepted');
+      if (thisTreatmentID == treatmentDetails.treatmentID) {
+        newTreatmentRef.set('accepted');
 
         HelperMethods.disableHomTabLocationUpdates();
 
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NewTripPage(
-              tripDetails: tripDetails,
+            builder: (context) => NewTreatmentPage(
+              treatmentDetails: treatmentDetails,
             ),
           ),
         );
-      } else if (thisRideID == 'cancelled') {
-        Toast.show("Ride has been cancelled", context,
+      } else if (thisTreatmentID == 'cancelled') {
+        Toast.show("Treatment has been cancelled", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-      } else if (thisRideID == 'timeout') {
-        Toast.show("Ride has timed out", context,
+      } else if (thisTreatmentID == 'timeout') {
+        Toast.show("Treatment has timed out", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       } else {
-        Toast.show("Ride not found", context,
+        Toast.show("Treatment not found", context,
             duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
       }
     });

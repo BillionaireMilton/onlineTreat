@@ -1,8 +1,8 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/history.dart';
-import 'package:cab_driver/dataprovider.dart';
-import 'package:cab_driver/screens/historypage.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
+import '../brand_colors.dart';
+import '../datamodels/history.dart';
+import '../dataprovider.dart';
+import '../screens/historypage.dart';
+import '../widgets/BrandDivier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,13 +51,13 @@ class EarningTab extends StatelessWidget {
                   width: 16,
                 ),
                 Text(
-                  'Trips',
+                  'Treatments',
                   style: TextStyle(fontSize: 16),
                 ),
                 Expanded(
                     child: Container(
                   child: Text(
-                    Provider.of<AppData>(context).tripCount.toString(),
+                    Provider.of<AppData>(context).treatmentCount.toString(),
                     textAlign: TextAlign.end,
                     style: TextStyle(fontSize: 18),
                   ),

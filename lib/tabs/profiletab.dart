@@ -1,4 +1,4 @@
-import 'package:cab_driver/screens/mainpage.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 

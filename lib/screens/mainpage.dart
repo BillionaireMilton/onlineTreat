@@ -1,13 +1,13 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/doctor.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/helpers/pushnotificationservice.dart';
-import 'package:cab_driver/tabs/earningstab.dart';
-import 'package:cab_driver/tabs/hometab.dart';
-import 'package:cab_driver/tabs/profile.dart';
-import 'package:cab_driver/tabs/profiletab.dart';
-import 'package:cab_driver/tabs/ratingtab.dart';
+import '../brand_colors.dart';
+import '../datamodels/doctor.dart';
+import '../globalvaribles.dart';
+import '../helpers/helpermethods.dart';
+import '../helpers/pushnotificationservice.dart';
+import '../tabs/earningstab.dart';
+import '../tabs/hometab.dart';
+import '../tabs/profile.dart';
+import '../tabs/profiletab.dart';
+import '../tabs/ratingtab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +82,7 @@ class _MainPageState extends State<MainPage>
   @override
   void dispose() {
     // TODO: implement dispose
-    tabController.dispose();
+    //tabController.dispose();
     super.dispose();
   }
 

@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../brand_colors.dart';
+import '../helpers/helpermethods.dart';
+import '../widgets/BrandDivier.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 
 class CollectPayment extends StatelessWidget {
@@ -46,7 +46,7 @@ class CollectPayment extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Amount above is the total fares to be charged to the rider',
+                'Amount above is the total fares to be charged to the pet owner',
                 textAlign: TextAlign.center,
               ),
             ),

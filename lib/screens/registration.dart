@@ -1,7 +1,7 @@
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import '../globalvaribles.dart';
+import '../screens/login.dart';
+import '../screens/mainpage.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:intl/intl.dart';
+
+import 'firstpage.dart';
 
 class RegistrationPage extends StatefulWidget {
   static const String id = 'register';
@@ -44,10 +46,16 @@ class _RegistrationPageState extends State<RegistrationPage> {
   var cpasswordController = TextEditingController();
 
   String gender;
+  String role;
 
   List _genderList = [
     'Male',
     'Female',
+  ];
+
+  List _roleList = [
+    'Doctor',
+    'Animal Health Technologist',
   ];
 
   void registerUser() async {
@@ -104,8 +112,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           .child('doctors/${user.uid}/doctor_info');
 
       Map map = {
+        'role': role,
         'prof': null,
-        'role': 'doctor',
         'comp': null,
         'pfl': null,
         'imageUrl': null,
@@ -140,6 +148,20 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 color: Colors.white,
                 height: 0,
               ),
+              Row(
+                children: [
+                  IconButton(
+                    alignment: Alignment.bottomLeft,
+                    icon: Icon(Icons.keyboard_arrow_left),
+                    color: Colors.black,
+                    onPressed: () {
+                      // Navigator.pop(context);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, FirstPage.id, (route) => false);
+                    },
+                  ),
+                ],
+              ),
               Container(
                 color: Colors.white,
                 child: Row(
@@ -154,7 +176,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
               Container(
-                height: 20,
+                //height: 20,
                 color: Colors.white,
                 child: Text(
                   "Pet Doctors Registration",
@@ -307,6 +329,63 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
 
+              // ROLE INPUT FIELD
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 12, right: 12, top: 8, bottom: 8),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 12, right: 35),
+                    child: DropdownButton(
+                      hint: RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Colors.green),
+                          children: [
+                            WidgetSpan(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: Icon(
+                                  FontAwesome.hospital_o,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ),
+                            TextSpan(text: 'Select your role'),
+                          ],
+                        ),
+                      ),
+                      dropdownColor: Colors.white,
+                      elevation: 5,
+                      icon: Icon(
+                        Icons.arrow_drop_down,
+                        color: Colors.green,
+                      ),
+                      iconSize: 36.0,
+                      isExpanded: true,
+                      underline: Padding(
+                        padding: EdgeInsets.all(5),
+                      ),
+                      value: role,
+                      style: TextStyle(color: Colors.green, fontSize: 22.0),
+                      onChanged: (value) {
+                        setState(() {
+                          role = value;
+                        });
+                      },
+                      items: _roleList.map((value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ),
+
               // PASWORD INPUT FIELD
               Padding(
                 padding: const EdgeInsets.only(
@@ -393,9 +472,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       return;
                     }
 
-                    //full name
+                    //gender name
                     if (gender == null) {
                       showSnackBar('please select gender');
+                      return;
+                    }
+
+                    //role name
+                    if (role == null) {
+                      showSnackBar('please select your role');
                       return;
                     }
 
@@ -451,10 +536,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   children: <Widget>[
                     SizedBox(height: 50),
                     Text(
-                      "Login here",
+                      "Already registered? Login here",
                       style: TextStyle(
                         color: Colors.green,
-                        fontSize: 20,
+                        fontSize: 15,
                       ),
                     )
                   ],

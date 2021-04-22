@@ -1,14 +1,14 @@
-import 'package:cab_driver/screens/registration.dart';
-import 'package:cab_driver/screens/roleLog.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../screens/registration.dart';
+import '../screens/roleLog.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cab_driver/brand_colors.dart';
+import '../brand_colors.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/services.dart';
 
 class LoginTecPage extends StatefulWidget {
@@ -65,7 +65,7 @@ class _LoginTecPageState extends State<LoginTecPage> {
     if (user != null) {
       //verify login
       DatabaseReference userRef =
-          FirebaseDatabase.instance.reference().child('drivers/${user.uid}');
+          FirebaseDatabase.instance.reference().child('tecs/${user.uid}');
 
       userRef.once().then((DataSnapshot snapshot) {
         if (snapshot.value != null) {

@@ -1,26 +1,33 @@
 import 'dart:io';
-
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
-import 'package:cab_driver/widgets/ComingSoon.dart';
+import '../screens/loading.dart';
+import '../widgets/ProgressDialog.dart';
+import 'package:flutter/cupertino.dart';
+import '../brand_colors.dart';
+import '../globalvaribles.dart';
+import '../screens/mainpage.dart';
+import '../widgets/TaxiButton.dart';
+import '../widgets/ComingSoon.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../screens/profilePic.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 
-class DoctorInfoPage extends StatefulWidget {
+class TecInfoPage extends StatefulWidget {
   static const String id = 'tecinfo';
 
   @override
-  _DoctorInfoPageState createState() => _DoctorInfoPageState();
+  _TecInfoPageState createState() => _TecInfoPageState();
 }
 
-class _DoctorInfoPageState extends State<DoctorInfoPage> {
+class _TecInfoPageState extends State<TecInfoPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  DateTime slectedGrad;
+  String gradDate;
+  DateTime slectedDob;
+  String dobDate;
   void showSnackBar(String title) {
     final snackbar = SnackBar(
       content: Text(
@@ -39,11 +46,87 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
   TextEditingController vcn = TextEditingController();
   TextEditingController address = TextEditingController();
 
-  String tecImageUrl;
-  String tecIdentUrl;
-  String tecCertUrl;
+  String doctorMemCertUrl;
+  String doctorIdentUrl;
+  String doctorCertUrl;
 
-  void updateProfile(context) {
+  Future<void> _slectedGrad(BuildContext context) async {
+    slectedGrad = DateTime.now();
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: slectedGrad,
+        firstDate: DateTime(1947),
+        lastDate: DateTime.now(),
+        //textDirection: TextDirection.ltr,
+        initialDatePickerMode: DatePickerMode.day,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData(
+              primarySwatch: Colors.green,
+              primaryColor: Colors.green,
+              accentColor: Colors.green,
+            ),
+            child: child,
+          );
+        });
+
+    if (picked != null && picked != slectedGrad) {
+      setState(() {
+        slectedGrad = picked;
+        gradDate = "${slectedGrad.toString()}".split(' ')[0];
+      });
+    }
+  }
+
+  Future<void> _slectedDob(BuildContext context) async {
+    slectedDob = DateTime.now();
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: slectedDob,
+        firstDate: DateTime(1947),
+        lastDate: DateTime.now(),
+        //textDirection: TextDirection.ltr,
+        initialDatePickerMode: DatePickerMode.day,
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData(
+              primarySwatch: Colors.green,
+              primaryColor: Colors.green,
+              accentColor: Colors.green,
+            ),
+            child: child,
+          );
+        });
+
+    if (picked != null && picked != slectedDob) {
+      setState(() {
+        slectedDob = picked;
+        dobDate = "${slectedDob.toString()}".split(' ')[0];
+      });
+    }
+  }
+
+  void updateProfile(context) async {
+    await _uploadMemCert();
+    await _uploadCert();
+    await _uploadIdent();
+    await _uploadCert();
+    print('ident upload');
+    print('update profile func called');
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Uploading Your documents...',
+      ),
+    );
+    // await _uploadCert();
+    // print('cert upload');
+    // await _uploadMemCert();
+    print('image upload');
+    // await _uploadIdent();
+    // print('ident upload');
+
     String id = currentFirebaseUser.uid;
     var dateFormat = DateFormat('MMM d, yyyy');
     var timeFormat = DateFormat('EEEE, hh:mm a');
@@ -51,82 +134,93 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
     String date = dateFormat.format(DateTime.now()).toString();
     String time = timeFormat.format(DateTime.now()).toString();
 
-    DatabaseReference tecRef =
-        FirebaseDatabase.instance.reference().child('tecs/$id/tec_info');
+    DatabaseReference doctorRef =
+        FirebaseDatabase.instance.reference().child('doctors/$id/doctor_info');
 
-    Map map = {
-      'imageUrl': tecImageUrl,
-      'dob': dob.text,
-      'identUrl': tecIdentUrl,
-      'nin': time,
-      'address': time,
+    Map<String, dynamic> map = {
+      'dob': dobDate,
+      'identUrl': doctorIdentUrl,
+      'memCertUrl': doctorMemCertUrl,
+      'nin': nin.text,
+      'address': address.text,
       'university': university.text,
-      'yog': yog.text,
-      'certUrl': tecCertUrl,
-      'vcn': time,
+      'yog': gradDate,
+      'certUrl': doctorCertUrl,
+      'vcn': vcn.text,
       'date': date,
       'time': time,
       'comp': 0,
     };
 
-    tecRef.update(map);
+    await doctorRef.update(map);
 
     Navigator.pushNamedAndRemoveUntil(context, MainPage.id, (route) => false);
   }
 
   // files required in the form
-  File _imageFile;
+  File _memCertFile;
+  String memCertName;
   File _identFile;
+  String identName;
   File _certFile;
+  String certName;
 
   ImagePicker imagePicker = ImagePicker();
 
-  // Choose profile image function
-  Future<void> _choosedImage() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+  // Choose profile memCert function
+  Future<void> _choosedMemCert() async {
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
-      _imageFile = File(pickedFile.path);
+      _memCertFile = File(pickedFile.path);
+      memCertName =
+          "petambulance NAAHHT cert.${_memCertFile.path.split('.').last}";
     });
   }
 
   // Choose identification file function
   Future<void> _choosedIdent() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
       _identFile = File(pickedFile.path);
+      identName =
+          "petambulance identity file.${_identFile.path.split('.').last}";
     });
   }
 
   // Choose certificate image function
   Future<void> _choosedCert() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
       _certFile = File(pickedFile.path);
+      certName =
+          "petambulance certificate file.${_certFile.path.split('.').last}";
     });
   }
 
   // Upload profile pic
-  void _uploadImage() {
-    // Create a unique filename for image
-    String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
-    final Reference storageReference =
-        FirebaseStorage.instance.ref().child('Images').child(imageFileName);
-    final UploadTask uploadTask = storageReference.putFile(_imageFile);
-    uploadTask.then((TaskSnapshot taskSnapshot) {
+  Future<void> _uploadMemCert() async {
+    // Create a unique filename for memCert
+    String memCertFileName = DateTime.now().microsecondsSinceEpoch.toString();
+    final Reference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('${currentDoctorInfo.email}/MemCerts')
+        .child(memCertFileName);
+    final UploadTask uploadTask = storageReference.putFile(_memCertFile);
+    await uploadTask.then((TaskSnapshot taskSnapshot) {
       taskSnapshot.ref.getDownloadURL().then((imageUrl) {
         // Save to real time database
         //updateProfile(imageUrl);
         setState(() {
-          tecImageUrl = imageUrl;
+          doctorMemCertUrl = imageUrl;
         });
       });
     }).catchError((error) {
@@ -137,20 +231,20 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
   }
 
   // Upload identity file
-  void _uploadIdent() {
+  Future<void> _uploadIdent() async {
     // Create a unique filename for image
     String identFileName = DateTime.now().microsecondsSinceEpoch.toString();
     final Reference storageReference = FirebaseStorage.instance
         .ref()
-        .child('Identifications')
+        .child('${currentDoctorInfo.email}/Identifications')
         .child(identFileName);
     final UploadTask uploadTask = storageReference.putFile(_identFile);
-    uploadTask.then((TaskSnapshot taskSnapshot) {
-      taskSnapshot.ref.getDownloadURL().then((identUrl) {
+    await uploadTask.then((TaskSnapshot taskSnapshot) {
+      taskSnapshot.ref.getDownloadURL().then((imageUrl) {
         // Save to real time database
         //updateProfile(identUrl);
         setState(() {
-          tecIdentUrl = identUrl;
+          doctorIdentUrl = imageUrl;
         });
       });
     }).catchError((error) {
@@ -161,20 +255,20 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
   }
 
   // Upload identity file
-  void _uploadCert() {
+  Future<void> _uploadCert() async {
     // Create a unique filename for image
     String certFileName = DateTime.now().microsecondsSinceEpoch.toString();
     final Reference storageReference = FirebaseStorage.instance
         .ref()
-        .child('Certificates')
+        .child('${currentDoctorInfo.email}/Certificates')
         .child(certFileName);
     final UploadTask uploadTask = storageReference.putFile(_certFile);
-    uploadTask.then((TaskSnapshot taskSnapshot) {
-      taskSnapshot.ref.getDownloadURL().then((certUrl) {
+    await uploadTask.then((TaskSnapshot taskSnapshot) {
+      taskSnapshot.ref.getDownloadURL().then((imageUrl) {
         // Save to real time database
         //updateProfile(certUrl);
         setState(() {
-          tecCertUrl = certUrl;
+          doctorCertUrl = imageUrl;
         });
       });
     }).catchError((error) {
@@ -182,14 +276,6 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
         error.toString(),
       );
     });
-  }
-
-  _saveData(imageUrl) {
-    var dateFormat = DateFormat('MMM d, yyyy');
-    var timeFormat = DateFormat('EEEE, hh:mm a');
-
-    String date = dateFormat.format(DateTime.now()).toString();
-    String time = timeFormat.format(DateTime.now()).toString();
   }
 
   @override
@@ -207,67 +293,58 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 5),
-              SizedBox(
-                height: 20,
-                child: Row(
-                  children: [
-                    IconButton(
-                      alignment: Alignment.bottomLeft,
-                      icon: Icon(Icons.keyboard_arrow_left),
-                      color: Colors.black,
-                      onPressed: () {
-                        // Navigator.pop(context, 'mainpage');
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, MainPage.id, (route) => false);
-                      },
-                    ),
-                    SizedBox(
-                      height: 50,
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              Image.asset(
-                'images/lg.png',
-                height: 210,
-                width: 110,
-              ),
               Padding(
-                padding: EdgeInsets.fromLTRB(30, 20, 30, 30),
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
                 child: Column(
                   children: <Widget>[
-                    SizedBox(
-                      height: 10,
-                    ),
                     Text(
-                      'Update your Informations',
-                      style: TextStyle(fontFamily: 'Brand- Bold', fontSize: 22),
+                      "Update your Informations",
+                      style: TextStyle(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.pink[900]),
                     ),
                     SizedBox(
-                      height: 25,
+                      height: 5,
                     ),
-                    // PROFILE PIC FIELD
+
+                    // NAAHHT MEMBERSHIP FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.green),
-                              border: InputBorder.none,
-                              labelStyle: TextStyle(color: Colors.green),
-                              labelText: "profilePic",
-                              hintText: "upload profile pic",
-                              icon: Icon(
-                                Icons.ballot,
-                                color: Colors.green,
-                              ),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10, bottom: 4),
+                      child: GestureDetector(
+                        onTap: () async {
+                          _choosedMemCert();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              // color: Colors.pink[800],
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 15, right: 10, left: 15, bottom: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  (FontAwesome.certificate),
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  _memCertFile == null
+                                      ? "Tap to upload NAAHHT membership certificate"
+                                      : '${memCertName}',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                Container()
+                              ],
                             ),
                           ),
                         ),
@@ -276,7 +353,62 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // IDENTIFICATION FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 10, bottom: 4),
+                      child: GestureDetector(
+                        onTap: () async {
+                          _choosedIdent();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              // color: Colors.pink[800],
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 15, right: 15, left: 15, bottom: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  (FontAwesome.id_card),
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  _identFile == null
+                                      ? "Tap to upload means of identification"
+                                      : '${identName}',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Container()
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 2, bottom: 6),
+                      child: Text(
+                          'voters card / drivers lincence / national identity card / international passport',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 13,
+                          )),
+                    ),
+
+                    // DOB INPUT FIELD
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -284,17 +416,27 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                         child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: TextFormField(
+                            readOnly: true,
+                            onTap: () {
+                              setState(() {
+                                _slectedDob(context);
+                              });
+                            },
+                            controller: dob,
                             decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.green),
-                              border: InputBorder.none,
-                              labelStyle: TextStyle(color: Colors.green),
-                              labelText: "identification",
-                              hintText: "upload identification",
-                              icon: Icon(
-                                Icons.ballot,
-                                color: Colors.green,
-                              ),
-                            ),
+                                hintStyle: TextStyle(color: Colors.green),
+                                border: InputBorder.none,
+                                labelStyle: TextStyle(color: Colors.green),
+                                labelText: dobDate == null
+                                    ? "Date of Birth"
+                                    : 'Date of Birth: ${dobDate}',
+                                hintText: dobDate == null
+                                    ? "Tap to select your date of birth"
+                                    : '${dobDate}',
+                                icon: Icon(
+                                  FontAwesome.calendar,
+                                  color: Colors.green,
+                                )),
                           ),
                         ),
                       ),
@@ -302,7 +444,8 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // NIN INPUT FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -311,6 +454,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                           padding: EdgeInsets.only(left: 10),
                           child: TextFormField(
                             controller: nin,
+                            keyboardType: TextInputType.number,
                             decoration: InputDecoration(
                                 hintStyle: TextStyle(color: Colors.green),
                                 border: InputBorder.none,
@@ -328,7 +472,8 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // ADDRESS INPUT FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -341,7 +486,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                 hintStyle: TextStyle(color: Colors.green),
                                 border: InputBorder.none,
                                 labelStyle: TextStyle(color: Colors.green),
-                                labelText: "address",
+                                labelText: "Address",
                                 hintText: "highway canada 27 artkinston",
                                 icon: Icon(
                                   Icons.place,
@@ -354,7 +499,8 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // UNIVERSITY INPUT FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -367,8 +513,8 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                 hintStyle: TextStyle(color: Colors.green),
                                 border: InputBorder.none,
                                 labelStyle: TextStyle(color: Colors.green),
-                                labelText: "University",
-                                hintText: "Your University",
+                                labelText: "Your Institution",
+                                hintText: "College / polytechnic / university",
                                 icon: Icon(
                                   Icons.school,
                                   color: Colors.green,
@@ -380,7 +526,8 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // YOG INPUT FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -388,13 +535,23 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                         child: Padding(
                           padding: EdgeInsets.only(left: 10),
                           child: TextFormField(
+                            readOnly: true,
+                            onTap: () {
+                              setState(() {
+                                _slectedGrad(context);
+                              });
+                            },
                             controller: yog,
                             decoration: InputDecoration(
                                 hintStyle: TextStyle(color: Colors.green),
                                 border: InputBorder.none,
                                 labelStyle: TextStyle(color: Colors.green),
-                                labelText: "YOG",
-                                hintText: "Year of Graduation",
+                                labelText: gradDate == null
+                                    ? "Year of Graduation"
+                                    : 'Year of graduation: ${gradDate}',
+                                hintText: gradDate == null
+                                    ? "Tap to select year of graduation"
+                                    : '${gradDate}',
                                 icon: Icon(
                                   Icons.calendar_today,
                                   color: Colors.green,
@@ -406,33 +563,60 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
 
                     // CERTIFICATION FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.green),
-                              border: InputBorder.none,
-                              labelStyle: TextStyle(color: Colors.green),
-                              labelText: "Certification",
-                              hintText: "upload certificate",
-                              icon: Icon(
-                                Icons.ballot,
-                                color: Colors.green,
-                              ),
+                      padding: const EdgeInsets.all(10),
+                      child: GestureDetector(
+                        onTap: () async {
+                          _choosedCert();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              // color: Colors.pink[800],
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 15, right: 15, left: 15, bottom: 15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  (FontAwesome.id_card),
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  _certFile == null
+                                      ? "Tap to upload certification"
+                                      : '${certName}',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                                Container()
+                              ],
                             ),
                           ),
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10, right: 10, top: 2, bottom: 6),
+                      child: Text(
+                          'Animal health tech certificate or other professional certification',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 13,
+                          )),
+                    ),
 
                     // VCN INPUT FIELD
                     Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, top: 6, bottom: 6),
                       child: Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.green),
@@ -448,7 +632,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                 labelText: "VCN",
                                 hintText: "Vetinary Certification Number",
                                 icon: Icon(
-                                  Icons.stay_primary_landscape,
+                                  (MaterialIcons.format_list_numbered),
                                   color: Colors.green,
                                 )),
                           ),
@@ -457,31 +641,82 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                     ),
 
                     SizedBox(
-                      height: 40.0,
+                      height: 10.0,
                     ),
+
                     TaxiButton(
-                      color: Colors.pink[900],
-                      title: 'Update',
-                      onPressed: () {
-                        if (yog.text.length < 3) {
-                          showSnackBar('Please provide a valid NIN');
-                          return;
-                        }
+                        color: Colors.pink[900],
+                        title: 'Update',
+                        onPressed: () {
+                          if (memCertName == null) {
+                            showSnackBar(
+                                'please kindly upload your NAAHHT membership certificate');
+                            return;
+                          }
 
-                        if (university.text.length < 3) {
-                          showSnackBar('Please provide a valid VCN');
-                          return;
-                        }
+                          if (nin.text.length < 11) {
+                            showSnackBar('Please provide a valid NIN');
+                            return;
+                          }
 
-                        if (dob.text.length < 3) {
-                          showSnackBar('Please provide a certification');
-                          return;
-                        }
+                          if (identName == null) {
+                            showSnackBar(
+                                'please upload a means of identification ');
+                            return;
+                          }
 
-                        comingSoon(context);
-                        // updateProfile(context);
-                      },
-                    )
+                          if (certName == null) {
+                            showSnackBar(
+                                'please kindly upload your certificate');
+                            return;
+                          }
+                          if (gradDate == null) {
+                            showSnackBar('kindly input your graduation date');
+                            return;
+                          }
+                          if (dobDate == null) {
+                            showSnackBar('kindly input your date of birth');
+                            return;
+                          }
+                          if (vcn.text.length < 3) {
+                            showSnackBar('Please provide a valid VCN');
+                            return;
+                          }
+
+                          if (address.text.length < 3) {
+                            showSnackBar('Please enter your address');
+                            return;
+                          }
+
+                          if (university.text.length < 3) {
+                            showSnackBar('Please input your institution name');
+                            return;
+                          }
+
+                          print('first show dialog');
+
+                          // showDialog(
+                          //   barrierDismissible: false,
+                          //   context: context,
+                          //   builder: (BuildContext context) => ProgressDialog(
+                          //     status: 'Uploading Your documents...',
+                          //   ),
+                          // );
+
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) => ProgressDialog(
+                              status: 'This might take a while...',
+                            ),
+                          );
+
+                          print('update profile init');
+                          updateProfile(context);
+
+                          //comingSoon(context);
+                          // updateProfile(context);
+                        }),
                   ],
                 ),
               )

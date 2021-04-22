@@ -1,13 +1,13 @@
 import 'dart:math';
-import 'package:cab_driver/datamodels/address.dart';
-import 'package:cab_driver/datamodels/history.dart';
+import '../datamodels/address.dart';
+import '../datamodels/history.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:cab_driver/datamodels/directiondetails.dart';
-import 'package:cab_driver/dataprovider.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/requesthelper.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import '../datamodels/directiondetails.dart';
+import '../dataprovider.dart';
+import '../globalvaribles.dart';
+import '../helpers/requesthelper.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -231,7 +231,7 @@ class HelperMethods {
         String earnings = snapshot.value.toString();
         Provider.of<AppData>(context, listen: false).updateEarnings(earnings);
 
-        List<String> tripHistoryKeys = [];
+        List<String> treatmentHistoryKeys = [];
       }
     });
 
@@ -241,19 +241,20 @@ class HelperMethods {
     historyRef.once().then((DataSnapshot snapshot) {
       if (snapshot.value != null) {
         Map<dynamic, dynamic> values = snapshot.value;
-        int tripCount = values.length;
+        int treatmentCount = values.length;
 
-        //update trip count  to data provider
-        Provider.of<AppData>(context, listen: false).updateTripCount(tripCount);
+        //update treatment count  to data provider
+        Provider.of<AppData>(context, listen: false)
+            .updateTreatmentCount(treatmentCount);
 
-        List<String> tripHistoryKeys = [];
+        List<String> treatmentHistoryKeys = [];
 
         values.forEach((key, value) {
-          tripHistoryKeys.add(key);
+          treatmentHistoryKeys.add(key);
 
-          // update trip keys to data provider
+          // update treatment keys to data provider
           Provider.of<AppData>(context, listen: false)
-              .updateTripKeys(tripHistoryKeys);
+              .updateTreatmentKeys(treatmentHistoryKeys);
 
           getHistoryData(context);
         });
@@ -262,17 +263,18 @@ class HelperMethods {
   }
 
   static void getHistoryData(context) {
-    var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
+    var keys =
+        Provider.of<AppData>(context, listen: false).treatmentHistoryKeys;
 
     for (String key in keys) {
       DatabaseReference historyRef =
-          FirebaseDatabase.instance.reference().child('rideRequest/$key');
+          FirebaseDatabase.instance.reference().child('treamentRequest/$key');
 
       historyRef.once().then((DataSnapshot snapshot) {
         if (snapshot.value != null) {
           var history = History.fromSnapshot(snapshot);
           Provider.of<AppData>(context, listen: false)
-              .updateTripHistory(history);
+              .updateTreatmentHistory(history);
           print(history.destination);
         }
       });

@@ -1,13 +1,14 @@
 import 'dart:io';
-import 'package:cab_driver/screens/doctorinfo.dart';
-import 'package:cab_driver/screens/loading.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
+import '../screens/doctorinfo.dart';
+import '../screens/loading.dart';
+import '../screens/tecinfo.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
-import 'package:cab_driver/widgets/ComingSoon.dart';
+import '../brand_colors.dart';
+import '../globalvaribles.dart';
+import '../screens/mainpage.dart';
+import '../widgets/TaxiButton.dart';
+import '../widgets/ComingSoon.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _ProfilePicState extends State<ProfilePic> {
 
   void updateProfile(context) async {
     await _uploadImage();
-
+    await _uploadImage();
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -69,8 +70,13 @@ class _ProfilePicState extends State<ProfilePic> {
 
     await doctorRef.update(map);
 
-    Navigator.pushNamedAndRemoveUntil(
-        context, DoctorInfoPage.id, (route) => false);
+    if (currentDoctorInfo.role == "Doctor") {
+      Navigator.pushNamedAndRemoveUntil(
+          context, DoctorInfoPage.id, (route) => false);
+    } else {
+      Navigator.pushNamedAndRemoveUntil(
+          context, TecInfoPage.id, (route) => false);
+    }
   }
 
   // files required in the form
@@ -80,7 +86,7 @@ class _ProfilePicState extends State<ProfilePic> {
 
   // Choose profile image function
   Future<void> _choosedImage() async {
-    PickedFile pickedFile = await imagePicker.getImage(
+    File pickedFile = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
@@ -95,8 +101,10 @@ class _ProfilePicState extends State<ProfilePic> {
   Future<void> _uploadImage() async {
     // Create a unique filename for image
     String imageFileName = DateTime.now().microsecondsSinceEpoch.toString();
-    final Reference storageReference =
-        FirebaseStorage.instance.ref().child('Images').child(imageFileName);
+    final Reference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('${currentDoctorInfo.email}/Images')
+        .child(imageFileName);
     final UploadTask uploadTask = storageReference.putFile(_imageFile);
     await uploadTask.then((TaskSnapshot taskSnapshot) {
       taskSnapshot.ref.getDownloadURL().then((imageUrl) {
@@ -219,7 +227,7 @@ class _ProfilePicState extends State<ProfilePic> {
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
                             padding: EdgeInsets.only(
-                                top: 15, right: 15, left: 15, bottom: 15),
+                                top: 15, right: 10, left: 15, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -236,7 +244,7 @@ class _ProfilePicState extends State<ProfilePic> {
                                       : '${imageName}',
                                   style: TextStyle(
                                     color: Colors.green,
-                                    fontSize: 20,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 Container()

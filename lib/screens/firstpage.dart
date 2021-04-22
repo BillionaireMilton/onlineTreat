@@ -1,15 +1,16 @@
-import 'package:cab_driver/screens/registration.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../screens/login.dart';
+import '../screens/registration.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cab_driver/screens/roleLog.dart';
-import 'package:cab_driver/screens/roleReg.dart';
-import 'package:cab_driver/brand_colors.dart';
+import '../screens/roleLog.dart';
+import '../screens/roleReg.dart';
+import '../brand_colors.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
@@ -30,7 +31,7 @@ class _FirstPageState extends State<FirstPage> {
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
+            padding: const EdgeInsets.only(bottom: 100.0),
             child: Image.asset(
               "images/bg.jpg",
               width: double.infinity,
@@ -49,8 +50,8 @@ class _FirstPageState extends State<FirstPage> {
                   Expanded(
                     child: Image.asset(
                       "images/lg.png",
-                      width: 400,
-                      height: 400,
+                      width: 300,
+                      height: 300,
                     ),
                   ),
                 ],
@@ -58,9 +59,9 @@ class _FirstPageState extends State<FirstPage> {
             ],
           ),
           DraggableScrollableSheet(
-            initialChildSize: .2,
-            minChildSize: .2,
-            maxChildSize: .2,
+            initialChildSize: .3,
+            minChildSize: .25,
+            maxChildSize: 1.0,
             builder: (context, scrollController) {
               return Container(
                 decoration: BoxDecoration(
@@ -77,79 +78,110 @@ class _FirstPageState extends State<FirstPage> {
                     ]),
                 child: Column(
                   children: [
-                    SizedBox(height: 20),
-                    Text(
-                      "Login or Register",
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 25,
+                    Expanded(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Text(
+                            "Welcome",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 30,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            LoginPage.id,
+                                            (route) => false);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.pink[800],
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 30,
+                                              right: 57,
+                                              left: 57,
+                                              bottom: 30),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                  "Login",
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(0),
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            RegistrationPage.id,
+                                            (route) => false);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.pink[800],
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 30,
+                                              right: 50,
+                                              left: 50,
+                                              bottom: 30),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                  "Register",
+                                                  style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontSize: 20,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: GestureDetector(
-                            onTap: () async {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, RoleLogPage.id, (route) => false);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.pink[800],
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 15, right: 22, left: 22, bottom: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "Login",
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 22,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(0),
-                          child: GestureDetector(
-                            onTap: () async {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, RoleRegPage.id, (route) => false);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.pink[800],
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 15, right: 15, left: 15, bottom: 15),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "Register",
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 22,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),

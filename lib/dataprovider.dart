@@ -1,12 +1,18 @@
-import 'package:cab_driver/datamodels/address.dart';
-import 'package:cab_driver/datamodels/history.dart';
+import 'datamodels/address.dart';
+import 'datamodels/history.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'datamodels/doctor.dart';
+import 'globalvaribles.dart';
+import 'helpers/helpermethods.dart';
 
 class AppData extends ChangeNotifier {
   String earnings = '0';
-  int tripCount = 0;
-  List<String> tripHistoryKeys = [];
-  List<History> tripHistory = [];
+  int treatmentCount = 0;
+  List<String> treatmentHistoryKeys = [];
+  List<History> treatmentHistory = [];
   Address pickupAddress;
 
   void updatePickupAddress(Address pickup) {
@@ -19,18 +25,18 @@ class AppData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateTripCount(int newTripCount) {
-    tripCount = newTripCount;
+  void updateTreatmentCount(int newTreatmentCount) {
+    treatmentCount = newTreatmentCount;
     notifyListeners();
   }
 
-  void updateTripKeys(List<String> newKeys) {
-    tripHistoryKeys = newKeys;
+  void updateTreatmentKeys(List<String> newKeys) {
+    treatmentHistoryKeys = newKeys;
     notifyListeners();
   }
 
-  void updateTripHistory(History historyItem) {
-    tripHistory.add(historyItem);
+  void updateTreatmentHistory(History historyItem) {
+    treatmentHistory.add(historyItem);
     notifyListeners();
   }
 }

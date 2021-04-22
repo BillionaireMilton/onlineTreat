@@ -1,4 +1,4 @@
-// import 'package:cab_driver/screens/mainpage.dart';
+// import '../screens/mainpage.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 // import 'package:flutter_icons/flutter_icons.dart';
@@ -230,23 +230,16 @@
 // }
 
 import 'dart:async';
-import 'package:cab_driver/datamodels/doctor.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/helpers/pushnotificationservice.dart';
-import 'package:cab_driver/screens/loading.dart';
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/doctorinfo.dart';
-import 'package:cab_driver/screens/samp.dart';
-import 'package:cab_driver/screens/tst.dart';
-import 'package:cab_driver/tabs/profile.dart';
-import 'package:cab_driver/widgets/AvailabilityButton.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
-import 'package:cab_driver/widgets/ConfirmSheet.dart';
-import 'package:cab_driver/widgets/ConfirmUpdate.dart';
-import 'package:cab_driver/widgets/NotificationDialog.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../datamodels/doctor.dart';
+import '../globalvaribles.dart';
+import '../screens/login.dart';
+import '../screens/doctorinfo.dart';
+import '../tabs/profile.dart';
+import '../widgets/AvailabilityButton.dart';
+import '../widgets/BrandDivier.dart';
+import '../widgets/ConfirmSheet.dart';
+import '../widgets/ConfirmUpdate.dart';
+import '../widgets/ProgressDialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -254,8 +247,6 @@ import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:outline_material_icons/outline_material_icons.dart';
-
-import '../brand_colors.dart';
 
 class HomeTabs extends StatefulWidget {
   @override
@@ -267,7 +258,7 @@ class _HomeTabsState extends State<HomeTabs> {
   Completer<GoogleMapController> _controller = Completer();
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  DatabaseReference tripRequestRef;
+  DatabaseReference treatmentRequestRef;
 
   bool _loading = false;
 
@@ -320,12 +311,6 @@ class _HomeTabsState extends State<HomeTabs> {
         });
       }
     });
-    PushNotificationService pushNotificationService = PushNotificationService();
-
-    pushNotificationService.initialize(context);
-    pushNotificationService.getToken();
-
-    HelperMethods.getHistoryInfo(context);
   }
 
   @override
@@ -700,19 +685,19 @@ class _HomeTabsState extends State<HomeTabs> {
     Geofire.setLocation(currentFirebaseUser.uid, currentPosition.latitude,
         currentPosition.longitude);
 
-    tripRequestRef = FirebaseDatabase.instance
+    treatmentRequestRef = FirebaseDatabase.instance
         .reference()
-        .child('doctors/${currentFirebaseUser.uid}/newtrip');
-    tripRequestRef.set('waiting');
+        .child('doctors/${currentFirebaseUser.uid}/newtreatment');
+    treatmentRequestRef.set('waiting');
 
-    tripRequestRef.onValue.listen((event) {});
+    treatmentRequestRef.onValue.listen((event) {});
   }
 
   void GoOffline() {
     Geofire.removeLocation(currentFirebaseUser.uid);
-    tripRequestRef.onDisconnect();
-    tripRequestRef.remove();
-    tripRequestRef = null;
+    treatmentRequestRef.onDisconnect();
+    treatmentRequestRef.remove();
+    treatmentRequestRef = null;
   }
 
   void getLocationUpdates() {

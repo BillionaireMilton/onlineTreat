@@ -1,15 +1,15 @@
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/registration.dart';
-import 'package:cab_driver/screens/firstpage.dart';
-import 'package:cab_driver/screens/loginTec.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../screens/login.dart';
+import '../screens/registration.dart';
+import '../screens/firstpage.dart';
+import '../screens/loginTec.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cab_driver/brand_colors.dart';
+import '../brand_colors.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
@@ -58,10 +58,12 @@ class _RoleLogPageState extends State<RoleLogPage> {
                   ),
                 ],
               ),
-              Image.asset(
-                "images/lg.png",
-                width: 350,
-                height: 350,
+              Expanded(
+                child: Image.asset(
+                  "images/lg.png",
+                  width: 300,
+                  height: 300,
+                ),
               ),
               SizedBox(height: 15),
               Text(

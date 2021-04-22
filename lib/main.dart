@@ -1,28 +1,30 @@
 import 'dart:io';
-import 'package:cab_driver/dataprovider.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/screens/historypage.dart';
-import 'package:cab_driver/screens/loading.dart';
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/loginTec.dart';
-import 'package:cab_driver/screens/mainpage.dart';
-import 'package:cab_driver/screens/firstpage.dart';
-import 'package:cab_driver/screens/newTripPage.dart';
-import 'package:cab_driver/screens/registrationTec.dart';
-import 'package:cab_driver/screens/roleLog.dart';
-import 'package:cab_driver/screens/roleReg.dart';
-import 'package:cab_driver/screens/registration.dart';
-import 'package:cab_driver/screens/doctorinfo.dart';
-import 'package:cab_driver/screens/samp.dart';
-import 'package:cab_driver/screens/tst.dart';
-import 'package:cab_driver/screens/wait.dart';
-import 'package:cab_driver/screens/profilePic.dart';
-import 'package:cab_driver/tabs/profile.dart';
-import 'package:cab_driver/tabs/profiletab.dart';
+import 'dataprovider.dart';
+import 'globalvaribles.dart';
+import 'screens/historypage.dart';
+import 'screens/loading.dart';
+import 'screens/login.dart';
+import 'screens/loginTec.dart';
+import 'screens/mainpage.dart';
+import 'screens/firstpage.dart';
+import 'screens/newTreatmentPage.dart';
+import 'screens/registrationTec.dart';
+import 'screens/roleLog.dart';
+import 'screens/roleReg.dart';
+import 'screens/registration.dart';
+import 'screens/doctorinfo.dart';
+import 'screens/samp.dart';
+import 'screens/tst.dart';
+import 'screens/wait.dart';
+import 'screens/profilePic.dart';
+import 'tabs/profile.dart';
+import 'tabs/profiletab.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'screens/tecinfo.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,6 +72,7 @@ class MyApp extends StatelessWidget {
             RegistrationPage.id: (context) => RegistrationPage(),
             RegistrationTecPage.id: (context) => RegistrationTecPage(),
             DoctorInfoPage.id: (context) => DoctorInfoPage(),
+            TecInfoPage.id: (context) => TecInfoPage(),
             LoginPage.id: (context) => LoginPage(),
             LoginTecPage.id: (context) => LoginTecPage(),
             ProfilePage.id: (context) => ProfilePage(),
@@ -77,11 +80,11 @@ class MyApp extends StatelessWidget {
             FirstPage.id: (context) => FirstPage(),
             RoleLogPage.id: (context) => RoleLogPage(),
             RoleRegPage.id: (context) => RoleRegPage(),
-            // TestPage.id: (context) => TestPage(),
+            Latest.id: (context) => Latest(),
             // Home.id: (context) => Home(),
             MyHomePage.id: (context) => MyHomePage(),
             Loading.id: (context) => Loading(),
-            NewTripPage.id: (context) => NewTripPage(),
+            NewTreatmentPage.id: (context) => NewTreatmentPage(),
             ProfilePic.id: (context) => ProfilePic(),
             HistoryPage.id: (context) => HistoryPage(),
           },

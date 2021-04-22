@@ -32,7 +32,7 @@ dependencies:
   firebase_auth: ^0.18.3
   firebase_database: ^4.3.0
   connectivity: ^2.0.2
-  google_maps_flutter: ^1.0.6
+  google_maps_flutter: ^2.0.3
   outline_material_icons: ^0.1.1
   geolocator: ^6.1.8
   http: ^0.12.2
@@ -52,6 +52,7 @@ dependencies:
   datetime_picker_formfield:
   date_field: ^1.0.4
   flutter_datetime_picker: ^1.5.0
+  cloud_firestore: 
 
 dev_dependencies:
   flutter_test:

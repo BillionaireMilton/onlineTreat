@@ -1,25 +1,26 @@
 import 'dart:async';
-import 'package:cab_driver/datamodels/doctor.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/helpers/pushnotificationservice.dart';
-import 'package:cab_driver/screens/historypage.dart';
-import 'package:cab_driver/screens/loading.dart';
-import 'package:cab_driver/screens/login.dart';
-import 'package:cab_driver/screens/doctorinfo.dart';
-import 'package:cab_driver/screens/newTripPage.dart';
-import 'package:cab_driver/screens/profilePic.dart';
-import 'package:cab_driver/screens/samp.dart';
-import 'package:cab_driver/screens/tst.dart';
-import 'package:cab_driver/tabs/profile.dart';
-import 'package:cab_driver/tabs/profiletab.dart';
-import 'package:cab_driver/widgets/AvailabilityButton.dart';
-import 'package:cab_driver/widgets/BrandDivier.dart';
-import 'package:cab_driver/widgets/ConfirmSheet.dart';
-import 'package:cab_driver/widgets/ConfirmUpdate.dart';
-import 'package:cab_driver/widgets/NotificationDialog.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../datamodels/doctor.dart';
+import '../globalvaribles.dart';
+import '../helpers/helpermethods.dart';
+import '../helpers/pushnotificationservice.dart';
+import '../screens/firstpage.dart';
+import '../screens/historypage.dart';
+import '../screens/loading.dart';
+import '../screens/login.dart';
+import '../screens/doctorinfo.dart';
+import '../screens/newTreatmentPage.dart';
+import '../screens/profilePic.dart';
+import '../screens/samp.dart';
+import '../screens/tst.dart';
+import '../tabs/profile.dart';
+import '../tabs/profiletab.dart';
+import '../widgets/AvailabilityButton.dart';
+import '../widgets/BrandDivier.dart';
+import '../widgets/ConfirmSheet.dart';
+import '../widgets/ConfirmUpdate.dart';
+import '../widgets/NotificationDialog.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +41,7 @@ class _HomeTabState extends State<HomeTab> {
   Completer<GoogleMapController> _controller = Completer();
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  DatabaseReference tripRequestRef;
-
-  bool _loading = false;
+  DatabaseReference treatmentRequestRef;
 
   Future<void> signOut() async {
     showDialog(
@@ -77,6 +76,20 @@ class _HomeTabState extends State<HomeTab> {
     mapController.animateCamera(CameraUpdate.newLatLng(pos));
   }
 
+  void performLogOut() async {
+    await signOut();
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => ProgressDialog(
+        status: 'Logging you out',
+      ),
+    );
+    await signOut();
+    Navigator.pushNamedAndRemoveUntil(context, FirstPage.id, (route) => false);
+    // changeScreenReplacement(context, LoginScreen());
+  }
+
   Future<String> getCurrentDoctorInfo() async {
     currentFirebaseUser = FirebaseAuth.instance.currentUser;
     DatabaseReference doctorRef = FirebaseDatabase.instance
@@ -88,9 +101,6 @@ class _HomeTabState extends State<HomeTab> {
         print('my name is ${currentDoctorInfo.fullName}');
         print('this is data list ${currentDoctorInfo}');
         return currentDoctorInfo;
-        setState(() {
-          _loading = false;
-        });
       }
     });
     PushNotificationService pushNotificationService = PushNotificationService();
@@ -106,6 +116,7 @@ class _HomeTabState extends State<HomeTab> {
     // TODO: implement initState
     super.initState();
     getCurrentDoctorInfo();
+    getCurrentPosition();
   }
 
   var bodyProgress = new Container(
@@ -156,6 +167,8 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    //getCurrentPosition();
+    // getLocationUpdates();
     return FutureBuilder(
         future: getCurrentDoctorInfo(),
         builder: (context, snapshot) {
@@ -235,7 +248,7 @@ class _HomeTabState extends State<HomeTab> {
                         },
                       ),
                       // ListTile(
-                      //   leading: Icon(OMIcons.person),
+                      //   leading: Icon(OMIcons.acUnit),
                       //   title: Text(
                       //     'profilePic',
                       //     style: TextStyle(
@@ -244,7 +257,7 @@ class _HomeTabState extends State<HomeTab> {
                       //   ),
                       //   onTap: () {
                       //     Navigator.pushNamedAndRemoveUntil(
-                      //         context, ProfilePic.id, (route) => false);
+                      //         context, Latest.id, (route) => false);
                       //     // changeScreenReplacement(context, LoginScreen());
                       //   },
                       // ),
@@ -282,18 +295,8 @@ class _HomeTabState extends State<HomeTab> {
                             fontSize: 16,
                           ),
                         ),
-                        onTap: () {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) => ProgressDialog(
-                              status: 'Logging you out',
-                            ),
-                          );
-                          signOut();
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, LoginPage.id, (route) => false);
-                          // changeScreenReplacement(context, LoginScreen());
+                        onTap: () async {
+                          await performLogOut();
                         },
                       ),
                     ],
@@ -310,11 +313,12 @@ class _HomeTabState extends State<HomeTab> {
                     zoomControlsEnabled: true,
                     mapType: MapType.normal,
                     initialCameraPosition: GooglePlex,
-                    onMapCreated: (GoogleMapController controller) {
+                    onMapCreated: (GoogleMapController controller) async {
                       _controller.complete(controller);
                       mapController = controller;
-                      getCurrentDoctorInfo();
+                      await getCurrentDoctorInfo();
                       getCurrentPosition();
+                      // checkRequest();
                     },
                   ),
                   // Container(
@@ -366,7 +370,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
 
                   Positioned(
-                    top: 500,
+                    top: 400,
                     left: 0,
                     right: 0,
                     bottom: 0,
@@ -415,7 +419,8 @@ class _HomeTabState extends State<HomeTab> {
                                           onPressed: () {
                                             if (!isAvailable) {
                                               GoOnline();
-                                              getLocationUpdates();
+                                              // getCurrentPosition();
+                                              // getLocationUpdates();
                                               Navigator.pop(context);
 
                                               setState(() {
@@ -440,34 +445,39 @@ class _HomeTabState extends State<HomeTab> {
                                       );
                                     },
                                   )
-                                : Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: GestureDetector(
-                                      onTap: () async {},
-                                      child: Container(
-                                        decoration: BoxDecoration(
+                                : Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: GestureDetector(
+                                        onTap: () async {},
+                                        child: Container(
+                                          decoration: BoxDecoration(
                                             color: Colors.pink[800],
                                             borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 15,
-                                              right: 15,
-                                              left: 15,
-                                              bottom: 15),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text(
-                                                "Your profile is being verified \n kindly wait while we verify your documents",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 23,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )
-                                            ],
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 15,
+                                                right: 15,
+                                                left: 15,
+                                                bottom: 15),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                    "Kindly wait while we verify your documents",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 23,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -486,24 +496,27 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void GoOnline() {
+    getCurrentPosition();
     Geofire.initialize('doctorsAvailable');
     print(currentFirebaseUser);
     Geofire.setLocation(currentFirebaseUser.uid, currentPosition.latitude,
         currentPosition.longitude);
 
-    tripRequestRef = FirebaseDatabase.instance
+    treatmentRequestRef = FirebaseDatabase.instance
         .reference()
-        .child('doctors/${currentFirebaseUser.uid}/newtrip');
-    tripRequestRef.set('waiting');
+        .child('doctors/${currentFirebaseUser.uid}/newtreatment');
+    treatmentRequestRef.set('waiting');
 
-    tripRequestRef.onValue.listen((event) {});
+    treatmentRequestRef.onValue.listen((event) {});
   }
 
   void GoOffline() {
+    getCurrentPosition();
     Geofire.removeLocation(currentFirebaseUser.uid);
-    tripRequestRef.onDisconnect();
-    tripRequestRef.remove();
-    tripRequestRef = null;
+    getLocationUpdates();
+    treatmentRequestRef.onDisconnect();
+    treatmentRequestRef.remove();
+    treatmentRequestRef = null;
   }
 
   void getLocationUpdates() {

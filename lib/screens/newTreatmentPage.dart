@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/tripdetails.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/helpers/mapkithelper.dart';
-import 'package:cab_driver/widgets/CollectingpaymentDialog.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../brand_colors.dart';
+import '../datamodels/treatmentdetails.dart';
+import '../helpers/helpermethods.dart';
+import '../helpers/mapkithelper.dart';
+import '../widgets/CollectingpaymentDialog.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -16,17 +16,17 @@ import 'package:provider/provider.dart';
 
 import '../globalvaribles.dart';
 
-class NewTripPage extends StatefulWidget {
-  static const String id = 'newtrip';
-  final TripDetails tripDetails;
-  NewTripPage({this.tripDetails});
+class NewTreatmentPage extends StatefulWidget {
+  static const String id = 'newtreatment';
+  final TreatmentDetails treatmentDetails;
+  NewTreatmentPage({this.treatmentDetails});
 
   @override
-  _NewTripPageState createState() => _NewTripPageState();
+  _NewTreatmentPageState createState() => _NewTreatmentPageState();
 }
 
-class _NewTripPageState extends State<NewTripPage> {
-  GoogleMapController rideMapController;
+class _NewTreatmentPageState extends State<NewTreatmentPage> {
+  GoogleMapController treatmentMapController;
   Completer<GoogleMapController> _controller = Completer();
   double mapPaddingBottom = 0;
 
@@ -78,7 +78,7 @@ class _NewTripPageState extends State<NewTripPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // acceptTrip();
+    // acceptTreatment();
   }
 
   @override
@@ -100,7 +100,7 @@ class _NewTripPageState extends State<NewTripPage> {
             initialCameraPosition: GooglePlex,
             onMapCreated: (GoogleMapController controller) async {
               _controller.complete(controller);
-              rideMapController = controller;
+              treatmentMapController = controller;
 
               setState(() {
                 mapPaddingBottom = (Platform.isIOS) ? 255 : 260;
@@ -108,7 +108,7 @@ class _NewTripPageState extends State<NewTripPage> {
 
               var currentLatLng =
                   LatLng(currentPosition.latitude, currentPosition.longitude);
-              var pickupLatLng = widget.tripDetails.pickup;
+              var pickupLatLng = widget.treatmentDetails.pickup;
 
               await getDirection(currentLatLng, pickupLatLng);
 
@@ -157,7 +157,7 @@ class _NewTripPageState extends State<NewTripPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          widget.tripDetails.riderName,
+                          widget.treatmentDetails.ownerName,
                           style:
                               TextStyle(fontSize: 22, fontFamily: 'Brand-Bold'),
                         ),
@@ -183,7 +183,7 @@ class _NewTripPageState extends State<NewTripPage> {
                         Expanded(
                           child: Container(
                             child: Text(
-                              widget.tripDetails.pickupAddress,
+                              widget.treatmentDetails.pickupAddress,
                               style: TextStyle(fontSize: 18),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -207,7 +207,8 @@ class _NewTripPageState extends State<NewTripPage> {
                         Expanded(
                           child: Container(
                             child: Text(
-                              widget.tripDetails.destinationAddress,
+                              'Petambulance',
+                              //widget.treatmentDetails.destinationAddress,
                               style: TextStyle(fontSize: 18),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -224,7 +225,7 @@ class _NewTripPageState extends State<NewTripPage> {
                       onPressed: () async {
                         if (status == 'accepted') {
                           status = 'arrived';
-                          rideRef.child('status').set(('arrived'));
+                          treatmentRef.child('status').set(('arrived'));
                           setState(() {
                             buttonTitle = 'START TRIP';
                             buttonColor = BrandColors.colorAccentPurple;
@@ -232,13 +233,13 @@ class _NewTripPageState extends State<NewTripPage> {
 
                           HelperMethods.showProgressDialog(context);
 
-                          await getDirection(widget.tripDetails.pickup,
-                              widget.tripDetails.destination);
+                          // await getDirection(widget.treatmentDetails.pickup,
+                          //     widget.treatmentDetails.destination);
 
                           Navigator.pop(context);
                         } else if (status == 'arrived') {
-                          status = 'ontrip';
-                          rideRef.child('status').set('ontrip');
+                          status = 'ontreatment';
+                          treatmentRef.child('status').set('ontreatment');
 
                           setState(() {
                             buttonTitle = 'END TRIP';
@@ -246,8 +247,8 @@ class _NewTripPageState extends State<NewTripPage> {
                           });
 
                           startTimer();
-                        } else if (status == 'ontrip') {
-                          endTrip();
+                        } else if (status == 'ontreatment') {
+                          endTreatment();
                         }
                       },
                     )
@@ -261,30 +262,30 @@ class _NewTripPageState extends State<NewTripPage> {
     );
   }
 
-  // void acceptTrip() {
-  //   String rideID = widget.tripDetails.rideID;
-  //   rideRef =
-  //       FirebaseDatabase.instance.reference().child('rideRequest/$rideID');
+  // void acceptTreatment() {
+  //   String treatmentID = widget.treatmentDetails.treatmentID;
+  //   treatmentRef =
+  //       FirebaseDatabase.instance.reference().child('treatmentRequest/$treatmentID');
 
-  //   rideRef.child('status').set('accepted');
-  //   rideRef.child('doctor_name').set(currentDoctorInfo.fullName);
-  //   //  rideRef.child('doctor_details').set('accepted');
-  //   rideRef
+  //   treatmentRef.child('status').set('accepted');
+  //   treatmentRef.child('doctor_name').set(currentDoctorInfo.fullName);
+  //   //  treatmentRef.child('doctor_details').set('accepted');
+  //   treatmentRef
   //       .child('doctor_details')
   //       .set('${currentDoctorInfo.doctorColor} - ${currentDoctorInfo.doctorModel}');
-  //   rideRef.child('doctor_phone').set(currentDoctorInfo.phone);
-  //   rideRef.child('doctor_id').set(currentDoctorInfo.id);
+  //   treatmentRef.child('doctor_phone').set(currentDoctorInfo.phone);
+  //   treatmentRef.child('doctor_id').set(currentDoctorInfo.id);
 
   //   Map locationMap = {
   //     'latitude': currentPosition.latitude.toString(),
   //     'longitude': currentPosition.longitude.toString(),
   //   };
 
-  //   rideRef.child('doctor_location').set(locationMap);
+  //   treatmentRef.child('doctor_location').set(locationMap);
 
   //   DatabaseReference historyRef = FirebaseDatabase.instance
   //       .reference()
-  //       .child('doctors/${currentFirebaseUser.uid}/history/$rideID');
+  //       .child('doctors/${currentFirebaseUser.uid}/history/$treatmentID');
 
   //   historyRef.set(true);
   // }
@@ -293,7 +294,7 @@ class _NewTripPageState extends State<NewTripPage> {
     //homeTabPositionStream =Geolocator.getPositionStream().listen((Position position)
     LatLng oldPosition = LatLng(0, 0);
 
-    ridePositionStream =
+    treatmentPositionStream =
         Geolocator.getPositionStream().listen((Position position) {
       myPosition = position;
       currentPosition = position;
@@ -312,24 +313,25 @@ class _NewTripPageState extends State<NewTripPage> {
 
       setState(() {
         CameraPosition cp = new CameraPosition(target: pos, zoom: 17);
-        rideMapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+        treatmentMapController
+            .animateCamera(CameraUpdate.newCameraPosition(cp));
 
         _markers.removeWhere((marker) => marker.markerId.value == 'moving');
         _markers.add(movingMarker);
       });
 
       oldPosition = pos;
-      updateTripDetails();
+      updateTreatmentDetails();
 
       Map locationMap = {
         'latitude': myPosition.latitude.toString(),
         'longitude': myPosition.longitude.toString(),
       };
-      rideRef.child('doctor_location').set(locationMap);
+      treatmentRef.child('doctor_location').set(locationMap);
     });
   }
 
-  Future<void> updateTripDetails() async {
+  Future<void> updateTreatmentDetails() async {
     if (!isRequestingDirection) {
       isRequestingDirection = true;
 
@@ -341,9 +343,10 @@ class _NewTripPageState extends State<NewTripPage> {
       LatLng destinationLatLng;
 
       if (status == 'accepted') {
-        destinationLatLng = widget.tripDetails.pickup;
+        destinationLatLng = widget.treatmentDetails.pickup;
       } else {
-        destinationLatLng = widget.tripDetails.destination;
+        //destinationLatLng = widget.treatmentDetails.destination;
+        destinationLatLng = widget.treatmentDetails.pickup;
       }
 
       var directionDetails = await HelperMethods.getDirectionDetails(
@@ -426,7 +429,8 @@ class _NewTripPageState extends State<NewTripPage> {
           LatLngBounds(southwest: pickupLatLng, northeast: destinationLatLng);
     }
 
-    rideMapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
+    treatmentMapController
+        .animateCamera(CameraUpdate.newLatLngBounds(bounds, 70));
 
     Marker pickupMarker = Marker(
       markerId: MarkerId('pickup'),
@@ -476,7 +480,7 @@ class _NewTripPageState extends State<NewTripPage> {
     });
   }
 
-  void endTrip() async {
+  void endTreatment() async {
     timer.cancel();
 
     HelperMethods.showProgressDialog(context);
@@ -484,23 +488,23 @@ class _NewTripPageState extends State<NewTripPage> {
     var currentLatLng = LatLng(myPosition.latitude, myPosition.longitude);
 
     var directionDetails = await HelperMethods.getDirectionDetails(
-        widget.tripDetails.pickup, currentLatLng);
+        widget.treatmentDetails.pickup, currentLatLng);
 
     Navigator.pop(context);
 
     int fares = HelperMethods.estimateFares(directionDetails, durationCounter);
 
-    rideRef.child('fares').set(fares.toString());
+    treatmentRef.child('fares').set(fares.toString());
 
-    rideRef.child('status').set('ended');
+    treatmentRef.child('status').set('ended');
 
-    ridePositionStream.cancel();
+    treatmentPositionStream.cancel();
 
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => CollectPayment(
-              paymentMethod: widget.tripDetails.paymentMethod,
+              paymentMethod: widget.treatmentDetails.paymentMethod,
               fares: fares,
             ));
 

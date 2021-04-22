@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:cab_driver/datamodels/doctor.dart';
-import 'package:cab_driver/globalvaribles.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
-import 'package:cab_driver/helpers/pushnotificationservice.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../datamodels/doctor.dart';
+import '../globalvaribles.dart';
+import '../screens/mainpage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +25,6 @@ class SplashScreenState extends State<MyHomePage> {
         print('this is data list ${currentDoctorInfo}');
       }
     });
-    PushNotificationService pushNotificationService = PushNotificationService();
-
-    pushNotificationService.initialize(context);
-    pushNotificationService.getToken();
-
-    HelperMethods.getHistoryInfo(context);
   }
 
   @override

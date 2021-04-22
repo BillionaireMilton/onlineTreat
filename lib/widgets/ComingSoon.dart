@@ -1,10 +1,11 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../brand_colors.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/material.dart';
-import 'package:cab_driver/widgets/TaxiOutlineButton.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../widgets/TaxiOutlineButton.dart';
+import '../widgets/TaxiButton.dart';
 
 class ComingSoonDialog extends StatelessWidget {
+  static const String id = 'comingsoon';
   @override
   Widget build(BuildContext context) {
     return Dialog(

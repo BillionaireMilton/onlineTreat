@@ -1,6 +1,6 @@
-import 'package:cab_driver/brand_colors.dart';
-import 'package:cab_driver/datamodels/history.dart';
-import 'package:cab_driver/helpers/helpermethods.dart';
+import '../brand_colors.dart';
+import '../datamodels/history.dart';
+import '../helpers/helpermethods.dart';
 import 'package:flutter/material.dart';
 
 class HistoryTile extends StatelessWidget {

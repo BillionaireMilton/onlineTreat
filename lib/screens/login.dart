@@ -1,14 +1,16 @@
-import 'package:cab_driver/screens/registration.dart';
-import 'package:cab_driver/widgets/ProgressDialog.dart';
-import 'package:cab_driver/widgets/TaxiButton.dart';
+import '../screens/registration.dart';
+import '../widgets/ProgressDialog.dart';
+import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:cab_driver/screens/roleLog.dart';
+import '../screens/roleLog.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cab_driver/screens/mainpage.dart';
+import '../screens/mainpage.dart';
 import 'package:flutter/services.dart';
+
+import 'firstpage.dart';
 
 class LoginPage extends StatefulWidget {
   static const String id = 'login';
@@ -104,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         // Navigator.pop(context);
                         Navigator.pushNamedAndRemoveUntil(
-                            context, RoleLogPage.id, (route) => false);
+                            context, FirstPage.id, (route) => false);
                       },
                     ),
                   ],
@@ -123,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 Container(
-                  height: 20,
+                  //height: 20,
                   color: Colors.white,
                   child: Text(
                     "Pet Doctors Login",
@@ -242,10 +244,10 @@ class _LoginPageState extends State<LoginPage> {
                     children: <Widget>[
                       SizedBox(height: 50),
                       Text(
-                        "Register here",
+                        "Don't have an account yet? Register here",
                         style: TextStyle(
                           color: Colors.green,
-                          fontSize: 20,
+                          fontSize: 15,
                         ),
                       ),
                     ],
