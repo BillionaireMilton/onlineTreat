@@ -278,6 +278,23 @@ class _TecInfoPageState extends State<TecInfoPage> {
     });
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('You Cannot exit this registration'),
+            content: new Text('Kindly wait to complete registration'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Center(child: Text("OK")),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   @override
   Widget build(BuildContext context) {
     void comingSoon(BuildContext context) {
@@ -287,440 +304,446 @@ class _TecInfoPageState extends State<TecInfoPage> {
           builder: (BuildContext context) => ComingSoonDialog());
     }
 
-    return Scaffold(
-      key: scaffoldKey,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      "Update your Informations",
-                      style: TextStyle(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.pink[900]),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        key: scaffoldKey,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "Update your Informations",
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.pink[900]),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
 
-                    // NAAHHT MEMBERSHIP FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 4),
-                      child: GestureDetector(
-                        onTap: () async {
-                          _choosedMemCert();
-                        },
+                      // NAAHHT MEMBERSHIP FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 4),
+                        child: GestureDetector(
+                          onTap: () async {
+                            _choosedMemCert();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                // color: Colors.pink[800],
+                                border: Border.all(color: Colors.green),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15, right: 10, left: 15, bottom: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    (FontAwesome.certificate),
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    _memCertFile == null
+                                        ? "Tap to upload NAAHHT membership certificate"
+                                        : '${memCertName}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  Container()
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // IDENTIFICATION FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 4),
+                        child: GestureDetector(
+                          onTap: () async {
+                            _choosedIdent();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                // color: Colors.pink[800],
+                                border: Border.all(color: Colors.green),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15, right: 15, left: 15, bottom: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    (FontAwesome.id_card),
+                                    color: Colors.green,
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    _identFile == null
+                                        ? "Tap to upload means of identification"
+                                        : '${identName}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Container()
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 2, bottom: 6),
+                        child: Text(
+                            'voters card / drivers lincence / national identity card / international passport',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 13,
+                            )),
+                      ),
+
+                      // DOB INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
                         child: Container(
                           decoration: BoxDecoration(
-                              // color: Colors.pink[800],
                               border: Border.all(color: Colors.green),
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 15, right: 10, left: 15, bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  (FontAwesome.certificate),
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  _memCertFile == null
-                                      ? "Tap to upload NAAHHT membership certificate"
-                                      : '${memCertName}',
-                                  style: TextStyle(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              readOnly: true,
+                              onTap: () {
+                                setState(() {
+                                  _slectedDob(context);
+                                });
+                              },
+                              controller: dob,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: dobDate == null
+                                      ? "Date of Birth"
+                                      : 'Date of Birth: ${dobDate}',
+                                  hintText: dobDate == null
+                                      ? "Tap to select your date of birth"
+                                      : '${dobDate}',
+                                  icon: Icon(
+                                    FontAwesome.calendar,
                                     color: Colors.green,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Container()
-                              ],
+                                  )),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // IDENTIFICATION FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 4),
-                      child: GestureDetector(
-                        onTap: () async {
-                          _choosedIdent();
-                        },
+                      // NIN INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
                         child: Container(
                           decoration: BoxDecoration(
-                              // color: Colors.pink[800],
                               border: Border.all(color: Colors.green),
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 15, right: 15, left: 15, bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  (FontAwesome.id_card),
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  _identFile == null
-                                      ? "Tap to upload means of identification"
-                                      : '${identName}',
-                                  style: TextStyle(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              controller: nin,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: "NIN",
+                                  hintText:
+                                      "Your National Identification Number",
+                                  icon: Icon(
+                                    Icons.confirmation_num,
                                     color: Colors.green,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                                Container()
-                              ],
+                                  )),
                             ),
                           ),
                         ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 2, bottom: 6),
-                      child: Text(
-                          'voters card / drivers lincence / national identity card / international passport',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 13,
-                          )),
-                    ),
-
-                    // DOB INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            readOnly: true,
-                            onTap: () {
-                              setState(() {
-                                _slectedDob(context);
-                              });
-                            },
-                            controller: dob,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: dobDate == null
-                                    ? "Date of Birth"
-                                    : 'Date of Birth: ${dobDate}',
-                                hintText: dobDate == null
-                                    ? "Tap to select your date of birth"
-                                    : '${dobDate}',
-                                icon: Icon(
-                                  FontAwesome.calendar,
-                                  color: Colors.green,
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // NIN INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            controller: nin,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: "NIN",
-                                hintText: "Your National Identification Number",
-                                icon: Icon(
-                                  Icons.confirmation_num,
-                                  color: Colors.green,
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // ADDRESS INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            controller: address,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: "Address",
-                                hintText: "highway canada 27 artkinston",
-                                icon: Icon(
-                                  Icons.place,
-                                  color: Colors.green,
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // UNIVERSITY INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            controller: university,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: "Your Institution",
-                                hintText: "College / polytechnic / university",
-                                icon: Icon(
-                                  Icons.school,
-                                  color: Colors.green,
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // YOG INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            readOnly: true,
-                            onTap: () {
-                              setState(() {
-                                _slectedGrad(context);
-                              });
-                            },
-                            controller: yog,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: gradDate == null
-                                    ? "Year of Graduation"
-                                    : 'Year of graduation: ${gradDate}',
-                                hintText: gradDate == null
-                                    ? "Tap to select year of graduation"
-                                    : '${gradDate}',
-                                icon: Icon(
-                                  Icons.calendar_today,
-                                  color: Colors.green,
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // CERTIFICATION FIELD
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: GestureDetector(
-                        onTap: () async {
-                          _choosedCert();
-                        },
+                      // ADDRESS INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
                         child: Container(
                           decoration: BoxDecoration(
-                              // color: Colors.pink[800],
                               border: Border.all(color: Colors.green),
                               borderRadius: BorderRadius.circular(5)),
                           child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 15, right: 15, left: 15, bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  (FontAwesome.id_card),
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  _certFile == null
-                                      ? "Tap to upload certification"
-                                      : '${certName}',
-                                  style: TextStyle(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              controller: address,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: "Address",
+                                  hintText: "highway canada 27 artkinston",
+                                  icon: Icon(
+                                    Icons.place,
                                     color: Colors.green,
-                                    fontSize: 20,
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // UNIVERSITY INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              controller: university,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: "Your Institution",
+                                  hintText:
+                                      "College / polytechnic / university",
+                                  icon: Icon(
+                                    Icons.school,
+                                    color: Colors.green,
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // YOG INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              readOnly: true,
+                              onTap: () {
+                                setState(() {
+                                  _slectedGrad(context);
+                                });
+                              },
+                              controller: yog,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: gradDate == null
+                                      ? "Year of Graduation"
+                                      : 'Year of graduation: ${gradDate}',
+                                  hintText: gradDate == null
+                                      ? "Tap to select year of graduation"
+                                      : '${gradDate}',
+                                  icon: Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.green,
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // CERTIFICATION FIELD
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: GestureDetector(
+                          onTap: () async {
+                            _choosedCert();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                // color: Colors.pink[800],
+                                border: Border.all(color: Colors.green),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15, right: 15, left: 15, bottom: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    (FontAwesome.id_card),
+                                    color: Colors.green,
+                                    size: 20,
                                   ),
-                                ),
-                                Container()
-                              ],
+                                  SizedBox(width: 10),
+                                  Text(
+                                    _certFile == null
+                                        ? "Tap to upload certification"
+                                        : '${certName}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Container()
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 2, bottom: 6),
-                      child: Text(
-                          'Animal health tech certificate or other professional certification',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 13,
-                          )),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 2, bottom: 6),
+                        child: Text(
+                            'Animal health tech certificate or other professional certification',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 13,
+                            )),
+                      ),
 
-                    // VCN INPUT FIELD
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 12, right: 12, top: 6, bottom: 6),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.green),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: TextFormField(
-                            controller: vcn,
-                            decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.green),
-                                border: InputBorder.none,
-                                labelStyle: TextStyle(color: Colors.green),
-                                labelText: "VCN",
-                                hintText: "Vetinary Certification Number",
-                                icon: Icon(
-                                  (MaterialIcons.format_list_numbered),
-                                  color: Colors.green,
-                                )),
+                      // VCN INPUT FIELD
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, top: 6, bottom: 6),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: TextFormField(
+                              controller: vcn,
+                              decoration: InputDecoration(
+                                  hintStyle: TextStyle(color: Colors.green),
+                                  border: InputBorder.none,
+                                  labelStyle: TextStyle(color: Colors.green),
+                                  labelText: "VCN",
+                                  hintText: "Vetinary Certification Number",
+                                  icon: Icon(
+                                    (MaterialIcons.format_list_numbered),
+                                    color: Colors.green,
+                                  )),
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    SizedBox(
-                      height: 10.0,
-                    ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
 
-                    TaxiButton(
-                        color: Colors.pink[900],
-                        title: 'Update',
-                        onPressed: () {
-                          if (memCertName == null) {
-                            showSnackBar(
-                                'please kindly upload your NAAHHT membership certificate');
-                            return;
-                          }
+                      TaxiButton(
+                          color: Colors.pink[900],
+                          title: 'Update',
+                          onPressed: () {
+                            if (memCertName == null) {
+                              showSnackBar(
+                                  'please kindly upload your NAAHHT membership certificate');
+                              return;
+                            }
 
-                          if (nin.text.length < 11) {
-                            showSnackBar('Please provide a valid NIN');
-                            return;
-                          }
+                            if (nin.text.length < 11) {
+                              showSnackBar('Please provide a valid NIN');
+                              return;
+                            }
 
-                          if (identName == null) {
-                            showSnackBar(
-                                'please upload a means of identification ');
-                            return;
-                          }
+                            if (identName == null) {
+                              showSnackBar(
+                                  'please upload a means of identification ');
+                              return;
+                            }
 
-                          if (certName == null) {
-                            showSnackBar(
-                                'please kindly upload your certificate');
-                            return;
-                          }
-                          if (gradDate == null) {
-                            showSnackBar('kindly input your graduation date');
-                            return;
-                          }
-                          if (dobDate == null) {
-                            showSnackBar('kindly input your date of birth');
-                            return;
-                          }
-                          if (vcn.text.length < 3) {
-                            showSnackBar('Please provide a valid VCN');
-                            return;
-                          }
+                            if (certName == null) {
+                              showSnackBar(
+                                  'please kindly upload your certificate');
+                              return;
+                            }
+                            if (gradDate == null) {
+                              showSnackBar('kindly input your graduation date');
+                              return;
+                            }
+                            if (dobDate == null) {
+                              showSnackBar('kindly input your date of birth');
+                              return;
+                            }
+                            if (vcn.text.length < 3) {
+                              showSnackBar('Please provide a valid VCN');
+                              return;
+                            }
 
-                          if (address.text.length < 3) {
-                            showSnackBar('Please enter your address');
-                            return;
-                          }
+                            if (address.text.length < 3) {
+                              showSnackBar('Please enter your address');
+                              return;
+                            }
 
-                          if (university.text.length < 3) {
-                            showSnackBar('Please input your institution name');
-                            return;
-                          }
+                            if (university.text.length < 3) {
+                              showSnackBar(
+                                  'Please input your institution name');
+                              return;
+                            }
 
-                          print('first show dialog');
+                            print('first show dialog');
 
-                          // showDialog(
-                          //   barrierDismissible: false,
-                          //   context: context,
-                          //   builder: (BuildContext context) => ProgressDialog(
-                          //     status: 'Uploading Your documents...',
-                          //   ),
-                          // );
+                            // showDialog(
+                            //   barrierDismissible: false,
+                            //   context: context,
+                            //   builder: (BuildContext context) => ProgressDialog(
+                            //     status: 'Uploading Your documents...',
+                            //   ),
+                            // );
 
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) => ProgressDialog(
-                              status: 'This might take a while...',
-                            ),
-                          );
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) => ProgressDialog(
+                                status: 'This might take a while...',
+                              ),
+                            );
 
-                          print('update profile init');
-                          updateProfile(context);
+                            print('update profile init');
+                            updateProfile(context);
 
-                          //comingSoon(context);
-                          // updateProfile(context);
-                        }),
-                  ],
-                ),
-              )
-            ],
+                            //comingSoon(context);
+                            // updateProfile(context);
+                          }),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

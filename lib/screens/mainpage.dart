@@ -71,6 +71,28 @@ class _MainPageState extends State<MainPage>
     HelperMethods.getHistoryInfo(context);
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit Pet Ambulance'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Text("NO"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: Text("YES"),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -88,48 +110,51 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: tabController,
-        children: <Widget>[
-          HomeTab(),
-          ProfilePage(),
-          //EarningTab(),
-          //RatingsTab(),
-          //ProfileTab(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            // ignore: deprecated_member_use
-            title: Text('Home'),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            // ignore: deprecated_member_use
-            title: Text('Profile'),
-          ),
-          //BottomNavigationBarItem(
-          //   icon: Icon(Icons.star),
-          //   // ignore: deprecated_member_use
-          //   title: Text('Ratings'),
-          // ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.person),
-          //   // ignore: deprecated_member_use
-          //   title: Text('Account'),
-          // ),
-        ],
-        currentIndex: selectedIndex,
-        unselectedItemColor: Colors.pink[900],
-        selectedItemColor: Colors.green,
-        showSelectedLabels: true,
-        selectedLabelStyle: TextStyle(fontSize: 12),
-        type: BottomNavigationBarType.fixed,
-        onTap: onItemClicked,
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: tabController,
+          children: <Widget>[
+            HomeTab(),
+            ProfilePage(),
+            //EarningTab(),
+            //RatingsTab(),
+            //ProfileTab(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              // ignore: deprecated_member_use
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              // ignore: deprecated_member_use
+              title: Text('Profile'),
+            ),
+            //BottomNavigationBarItem(
+            //   icon: Icon(Icons.star),
+            //   // ignore: deprecated_member_use
+            //   title: Text('Ratings'),
+            // ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(Icons.person),
+            //   // ignore: deprecated_member_use
+            //   title: Text('Account'),
+            // ),
+          ],
+          currentIndex: selectedIndex,
+          unselectedItemColor: Colors.pink[900],
+          selectedItemColor: Colors.green,
+          showSelectedLabels: true,
+          selectedLabelStyle: TextStyle(fontSize: 12),
+          type: BottomNavigationBarType.fixed,
+          onTap: onItemClicked,
+        ),
       ),
     );
   }

@@ -1,10 +1,10 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TreatmentDetails {
-  //String destinationAddress;
+  String destinationAddress;
   String pickupAddress;
   LatLng pickup;
-  //LatLng destination;
+  LatLng destination;
   String treatmentID;
   String paymentMethod;
   String ownerName;
@@ -13,8 +13,8 @@ class TreatmentDetails {
   TreatmentDetails(
       {this.pickupAddress,
       this.treatmentID,
-      //this.destinationAddress,
-      //this.destination,
+      this.destinationAddress,
+      this.destination,
       this.pickup,
       this.paymentMethod,
       this.ownerName,

@@ -45,13 +45,13 @@ class _NewTreatmentPageState extends State<NewTreatmentPage> {
 
   Position myPosition;
 
-  String status = 'accepted';
+  String status = 'arrived';
 
   String durationString = '';
 
   bool isRequestingDirection = false;
 
-  String buttonTitle = 'ARRIVED';
+  String buttonTitle = 'GO FOR TREATMENT';
 
   Color buttonColor = BrandColors.colorGreen;
 
@@ -63,11 +63,8 @@ class _NewTreatmentPageState extends State<NewTreatmentPage> {
     if (movingMarkerIcon == null) {
       ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context, size: Size(2, 2));
-      BitmapDescriptor.fromAssetImage(
-              imageConfiguration,
-              (Platform.isIOS)
-                  ? 'images/car_ios.png'
-                  : 'images/car_android.png')
+      BitmapDescriptor.fromAssetImage(imageConfiguration,
+              (Platform.isIOS) ? 'images/new_amb2.png' : 'images/new_amb2.png')
           .then((icon) {
         movingMarkerIcon = icon;
       });
@@ -78,217 +75,224 @@ class _NewTreatmentPageState extends State<NewTreatmentPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // acceptTreatment();
+    acceptTreatment();
   }
 
   @override
   Widget build(BuildContext context) {
     createMarker();
-    return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-            padding: EdgeInsets.only(bottom: mapPaddingBottom),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            mapToolbarEnabled: true,
-            trafficEnabled: true,
-            mapType: MapType.normal,
-            circles: _circles,
-            markers: _markers,
-            polylines: _polyLines,
-            initialCameraPosition: GooglePlex,
-            onMapCreated: (GoogleMapController controller) async {
-              _controller.complete(controller);
-              treatmentMapController = controller;
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(false);
+        return false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            GoogleMap(
+              padding: EdgeInsets.only(bottom: mapPaddingBottom),
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              mapToolbarEnabled: true,
+              trafficEnabled: true,
+              mapType: MapType.normal,
+              circles: _circles,
+              markers: _markers,
+              polylines: _polyLines,
+              initialCameraPosition: GooglePlex,
+              onMapCreated: (GoogleMapController controller) async {
+                _controller.complete(controller);
+                treatmentMapController = controller;
 
-              setState(() {
-                mapPaddingBottom = (Platform.isIOS) ? 255 : 260;
-              });
+                setState(() {
+                  mapPaddingBottom = (Platform.isIOS) ? 255 : 260;
+                });
 
-              var currentLatLng =
-                  LatLng(currentPosition.latitude, currentPosition.longitude);
-              var pickupLatLng = widget.treatmentDetails.pickup;
+                var currentLatLng =
+                    LatLng(currentPosition.latitude, currentPosition.longitude);
+                var pickupLatLng = widget.treatmentDetails.pickup;
 
-              await getDirection(currentLatLng, pickupLatLng);
+                await getDirection(currentLatLng, pickupLatLng);
 
-              getLocationUpdates();
-            },
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 15.0,
-                    spreadRadius: 0.5,
-                    offset: Offset(
-                      0.7,
-                      0.7,
-                    ),
-                  )
-                ],
-              ),
-              height: Platform.isIOS ? 280 : 255,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      durationString,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Brand-Bold',
-                          color: BrandColors.colorAccentPurple),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          widget.treatmentDetails.ownerName,
-                          style:
-                              TextStyle(fontSize: 22, fontFamily: 'Brand-Bold'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: Icon(Icons.call),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Image.asset(
-                          'images/pickicon.png',
-                          height: 16,
-                          width: 16,
-                        ),
-                        SizedBox(
-                          width: 18,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              widget.treatmentDetails.pickupAddress,
-                              style: TextStyle(fontSize: 18),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Image.asset(
-                          'images/desticon.png',
-                          height: 16,
-                          width: 16,
-                        ),
-                        SizedBox(
-                          width: 18,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Text(
-                              'Petambulance',
-                              //widget.treatmentDetails.destinationAddress,
-                              style: TextStyle(fontSize: 18),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    TaxiButton(
-                      title: buttonTitle,
-                      color: buttonColor,
-                      onPressed: () async {
-                        if (status == 'accepted') {
-                          status = 'arrived';
-                          treatmentRef.child('status').set(('arrived'));
-                          setState(() {
-                            buttonTitle = 'START TRIP';
-                            buttonColor = BrandColors.colorAccentPurple;
-                          });
-
-                          HelperMethods.showProgressDialog(context);
-
-                          // await getDirection(widget.treatmentDetails.pickup,
-                          //     widget.treatmentDetails.destination);
-
-                          Navigator.pop(context);
-                        } else if (status == 'arrived') {
-                          status = 'ontreatment';
-                          treatmentRef.child('status').set('ontreatment');
-
-                          setState(() {
-                            buttonTitle = 'END TRIP';
-                            buttonColor = Colors.red[900];
-                          });
-
-                          startTimer();
-                        } else if (status == 'ontreatment') {
-                          endTreatment();
-                        }
-                      },
+                getLocationUpdates();
+              },
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 15.0,
+                      spreadRadius: 0.5,
+                      offset: Offset(
+                        0.7,
+                        0.7,
+                      ),
                     )
                   ],
                 ),
+                height: Platform.isIOS ? 280 : 255,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        durationString,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Brand-Bold',
+                            color: BrandColors.colorAccentPurple),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            widget.treatmentDetails.ownerName,
+                            style: TextStyle(
+                                fontSize: 22, fontFamily: 'Brand-Bold'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Icon(Icons.call),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      // Row(
+                      //   children: <Widget>[
+                      //     Image.asset(
+                      //       'images/pickicon.png',
+                      //       height: 16,
+                      //       width: 16,
+                      //     ),
+                      //     SizedBox(
+                      //       width: 18,
+                      //     ),
+                      //     Expanded(
+                      //       child: Container(
+                      //         child: Text(
+                      //           widget.treatmentDetails.pickupAddress,
+                      //           style: TextStyle(fontSize: 18),
+                      //           overflow: TextOverflow.ellipsis,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // SizedBox(
+                      //   height: 15,
+                      // ),
+                      Row(
+                        children: <Widget>[
+                          Image.asset(
+                            'images/desticon.png',
+                            height: 16,
+                            width: 16,
+                          ),
+                          SizedBox(
+                            width: 18,
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Text(
+                                widget.treatmentDetails.pickupAddress,
+                                //widget.treatmentDetails.destinationAddress,
+                                style: TextStyle(fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      TaxiButton(
+                        title: buttonTitle,
+                        color: buttonColor,
+                        onPressed: () async {
+                          print(
+                              "_______THIS IS THE TREATMENT STATUS__::__${status}_________________");
+                          if (status == 'accepted') {
+                            status = 'arrived';
+                            treatmentRef.child('status').set(('arrived'));
+                            setState(() {
+                              buttonTitle = 'START TRIP';
+                              buttonColor = BrandColors.colorAccentPurple;
+                            });
+
+                            HelperMethods.showProgressDialog(context);
+
+                            await getDirection(widget.treatmentDetails.pickup,
+                                widget.treatmentDetails.destination);
+
+                            Navigator.pop(context);
+                          } else if (status == 'arrived') {
+                            status = 'ontreatment';
+                            treatmentRef.child('status').set('ontreatment');
+
+                            setState(() {
+                              buttonTitle = 'TREATMENT COMPLETED';
+                              buttonColor = Colors.pink[900];
+                            });
+
+                            startTimer();
+                          } else if (status == 'ontreatment') {
+                            endTreatment();
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
 
-  // void acceptTreatment() {
-  //   String treatmentID = widget.treatmentDetails.treatmentID;
-  //   treatmentRef =
-  //       FirebaseDatabase.instance.reference().child('treatmentRequest/$treatmentID');
+  void acceptTreatment() {
+    String treatmentID = widget.treatmentDetails.treatmentID;
+    treatmentRef = FirebaseDatabase.instance
+        .reference()
+        .child('treatmentRequest/$treatmentID');
 
-  //   treatmentRef.child('status').set('accepted');
-  //   treatmentRef.child('doctor_name').set(currentDoctorInfo.fullName);
-  //   //  treatmentRef.child('doctor_details').set('accepted');
-  //   treatmentRef
-  //       .child('doctor_details')
-  //       .set('${currentDoctorInfo.doctorColor} - ${currentDoctorInfo.doctorModel}');
-  //   treatmentRef.child('doctor_phone').set(currentDoctorInfo.phone);
-  //   treatmentRef.child('doctor_id').set(currentDoctorInfo.id);
+    treatmentRef.child('status').set('accepted');
+    treatmentRef.child('doctor_name').set(currentDoctorInfo.fullName);
+    //  treatmentRef.child('doctor_details').set('accepted');
+    treatmentRef.child('doctor_details').set('${currentDoctorInfo.role}');
+    treatmentRef.child('doctor_phone').set(currentDoctorInfo.phone);
+    treatmentRef.child('doctor_id').set(currentDoctorInfo.id);
 
-  //   Map locationMap = {
-  //     'latitude': currentPosition.latitude.toString(),
-  //     'longitude': currentPosition.longitude.toString(),
-  //   };
+    Map locationMap = {
+      'latitude': currentPosition.latitude.toString(),
+      'longitude': currentPosition.longitude.toString(),
+    };
 
-  //   treatmentRef.child('doctor_location').set(locationMap);
+    treatmentRef.child('doctor_location').set(locationMap);
 
-  //   DatabaseReference historyRef = FirebaseDatabase.instance
-  //       .reference()
-  //       .child('doctors/${currentFirebaseUser.uid}/history/$treatmentID');
+    DatabaseReference historyRef = FirebaseDatabase.instance
+        .reference()
+        .child('doctors/${currentFirebaseUser.uid}/history/$treatmentID');
 
-  //   historyRef.set(true);
-  // }
+    historyRef.set(true);
+  }
 
   void getLocationUpdates() {
     //homeTabPositionStream =Geolocator.getPositionStream().listen((Position position)
@@ -297,6 +301,7 @@ class _NewTreatmentPageState extends State<NewTreatmentPage> {
     treatmentPositionStream =
         Geolocator.getPositionStream().listen((Position position) {
       myPosition = position;
+      print("${myPosition}");
       currentPosition = position;
       LatLng pos = LatLng(position.latitude, position.longitude);
 
@@ -324,8 +329,8 @@ class _NewTreatmentPageState extends State<NewTreatmentPage> {
       updateTreatmentDetails();
 
       Map locationMap = {
-        'latitude': myPosition.latitude.toString(),
-        'longitude': myPosition.longitude.toString(),
+        'latitude': myPosition.latitude.toString(), //6.649667,
+        'longitude': myPosition.longitude.toString(), //3.306385,
       };
       treatmentRef.child('doctor_location').set(locationMap);
     });

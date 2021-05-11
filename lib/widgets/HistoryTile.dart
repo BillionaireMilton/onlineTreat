@@ -38,7 +38,7 @@ class HistoryTile extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      '\₹${history.fares}',
+                      '\₦${history.fares}',
                       style: TextStyle(
                           fontFamily: 'Brand-Bold',
                           fontSize: 16,

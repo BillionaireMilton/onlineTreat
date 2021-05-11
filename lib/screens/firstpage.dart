@@ -24,171 +24,196 @@ class FirstPage extends StatefulWidget {
 class _FirstPageState extends State<FirstPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 100.0),
-            child: Image.asset(
-              "images/bg.jpg",
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 100,
+    Future<bool> _onBackPressed() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit Pet Ambulance'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Text("NO"),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Image.asset(
-                      "images/lg.png",
-                      width: 300,
-                      height: 300,
-                    ),
-                  ),
-                ],
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: Text("YES"),
               ),
             ],
           ),
-          DraggableScrollableSheet(
-            initialChildSize: .3,
-            minChildSize: .25,
-            maxChildSize: 1.0,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(.3),
-                          offset: Offset(2, 3),
-                          blurRadius: 12)
-                    ]),
-                child: Column(
+        ) ??
+        false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+          child: Scaffold(
+        key: scaffoldKey,
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 100.0),
+              child: Image.asset(
+                "images/bg.jpg",
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Column(
+              children: [
+                SizedBox(
+                  height: 100,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Text(
-                            "Welcome",
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 30,
-                            ),
-                          ),
-                          SizedBox(height: 5),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            LoginPage.id,
-                                            (route) => false);
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.pink[800],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 30,
-                                              right: 57,
-                                              left: 57,
-                                              bottom: 30),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                  "Login",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            RegistrationPage.id,
-                                            (route) => false);
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.pink[800],
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 30,
-                                              right: 50,
-                                              left: 50,
-                                              bottom: 30),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                  "Register",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 20,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      child: Image.asset(
+                        "images/lg.png",
+                        width: 300,
+                        height: 300,
                       ),
                     ),
                   ],
                 ),
-              );
-            },
-          )
-        ],
+              ],
+            ),
+            DraggableScrollableSheet(
+              initialChildSize: .3,
+              minChildSize: .25,
+              maxChildSize: 1.0,
+              builder: (context, scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(.3),
+                            offset: Offset(2, 3),
+                            blurRadius: 12)
+                      ]),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 20),
+                            Text(
+                              "Welcome",
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 30,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Expanded(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              LoginPage.id,
+                                              (route) => false);
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.pink[800],
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 30,
+                                                right: 57,
+                                                left: 57,
+                                                bottom: 30),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                    "Login",
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              RegistrationPage.id,
+                                              (route) => false);
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.pink[800],
+                                              borderRadius:
+                                                  BorderRadius.circular(5)),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 30,
+                                                right: 50,
+                                                left: 50,
+                                                bottom: 30),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                    "Register",
+                                                    style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }

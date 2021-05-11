@@ -70,7 +70,7 @@ class _ProfilePicState extends State<ProfilePic> {
 
     await doctorRef.update(map);
 
-    if (currentDoctorInfo.role == "Doctor") {
+    if (currentDoctorInfo.role == "Vetinary Doctor") {
       Navigator.pushNamedAndRemoveUntil(
           context, DoctorInfoPage.id, (route) => false);
     } else {
@@ -123,150 +123,157 @@ class _ProfilePicState extends State<ProfilePic> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            bottom: 45.0,
-            top: 8.0,
-            right: 15.0,
-            left: 15.0,
-          ),
-          child: TaxiButton(
-            color: Colors.pink[900],
-            title: 'Proceed',
-            onPressed: () {
-              if (imageName == null) {
-                showSnackBar('please choose a profile picture ');
-                return;
-              }
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushNamedAndRemoveUntil(
+            context, MainPage.id, (route) => false);
+        return true;
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.only(
+              bottom: 45.0,
+              top: 8.0,
+              right: 15.0,
+              left: 15.0,
+            ),
+            child: TaxiButton(
+              color: Colors.pink[900],
+              title: 'Proceed',
+              onPressed: () {
+                if (imageName == null) {
+                  showSnackBar('please choose a profile picture ');
+                  return;
+                }
 
-              print('first show dialog');
+                print('first show dialog');
 
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (BuildContext context) => ProgressDialog(
-                  status: 'Uploading Your Picture...',
-                ),
-              );
-
-              _uploadImage();
-              print('update profile init');
-              updateProfile(context);
-
-              //comingSoon(context);
-              // updateProfile(context);
-            },
-          ),
-        ),
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  IconButton(
-                    alignment: Alignment.bottomLeft,
-                    icon: Icon(Icons.keyboard_arrow_left),
-                    color: Colors.black,
-                    onPressed: () {
-                      // Navigator.pop(context, 'mainpage');
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, MainPage.id, (route) => false);
-                    },
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) => ProgressDialog(
+                    status: 'Uploading Your Picture...',
                   ),
-                ],
-              ),
-              _imageFile == null
-                  ? Image.asset(
-                      'images/user_icon.png',
-                      height: 210,
-                      width: 210,
-                    )
-                  : //Image.file(_imageFile),
-                  Container(
-                      width: double.infinity,
-                      height: 300,
-                      alignment: Alignment(0.0, 0.0),
-                      child: CircleAvatar(
-                        backgroundImage: FileImage(_imageFile),
-                        radius: 150.0,
+                );
+
+                //_uploadImage();
+                print('update profile init');
+                updateProfile(context);
+
+                //comingSoon(context);
+                // updateProfile(context);
+              },
+            ),
+          ),
+          elevation: 0,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    IconButton(
+                      alignment: Alignment.bottomLeft,
+                      icon: Icon(Icons.keyboard_arrow_left),
+                      color: Colors.black,
+                      onPressed: () {
+                        // Navigator.pop(context, 'mainpage');
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, MainPage.id, (route) => false);
+                      },
+                    ),
+                  ],
+                ),
+                _imageFile == null
+                    ? Image.asset(
+                        'images/user_icon.png',
+                        height: 210,
+                        width: 210,
+                      )
+                    : //Image.file(_imageFile),
+                    Container(
+                        width: double.infinity,
+                        height: 300,
+                        alignment: Alignment(0.0, 0.0),
+                        child: CircleAvatar(
+                          backgroundImage: FileImage(_imageFile),
+                          radius: 150.0,
+                        ),
                       ),
-                    ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 25),
-                    Text(
-                      "Upload Profile Image",
-                      style: TextStyle(
-                          fontSize: 25.0,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.pink[900]),
-                    ),
-                    SizedBox(
-                      height: 35,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: GestureDetector(
-                        onTap: () async {
-                          _choosedImage();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              // color: Colors.pink[800],
-                              border: Border.all(color: Colors.green),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 15, right: 10, left: 15, bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.image,
-                                  color: Colors.green,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  _imageFile == null
-                                      ? "Tap to upload profile picture"
-                                      : '${imageName}',
-                                  style: TextStyle(
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 25),
+                      Text(
+                        "Upload Profile Image",
+                        style: TextStyle(
+                            fontSize: 25.0,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.pink[900]),
+                      ),
+                      SizedBox(
+                        height: 35,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: GestureDetector(
+                          onTap: () async {
+                            _choosedImage();
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                // color: Colors.pink[800],
+                                border: Border.all(color: Colors.green),
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15, right: 10, left: 15, bottom: 15),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.image,
                                     color: Colors.green,
-                                    fontSize: 15,
+                                    size: 20,
                                   ),
-                                ),
-                                Container()
-                              ],
+                                  SizedBox(width: 10),
+                                  Text(
+                                    _imageFile == null
+                                        ? "Tap to upload profile picture"
+                                        : '${imageName}',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  Container()
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 2, bottom: 6),
-                      child: Text('you can change this later on your profile',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 13,
-                          )),
-                    ),
-                  ],
-                ),
-              )
-            ],
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 2, bottom: 6),
+                        child: Text('you can change this later on your profile',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 13,
+                            )),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

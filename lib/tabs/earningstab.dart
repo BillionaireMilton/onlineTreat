@@ -44,7 +44,7 @@ class EarningTab extends StatelessWidget {
             child: Row(
               children: [
                 Image.asset(
-                  'images/taxi.png',
+                  'images/ambl.png',
                   width: 70,
                 ),
                 SizedBox(

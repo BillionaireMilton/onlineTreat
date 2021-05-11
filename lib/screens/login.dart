@@ -58,8 +58,9 @@ class _LoginPageState extends State<LoginPage> {
             .catchError((ex) {
       //check error and display message
       Navigator.pop(context);
-      PlatformException thisEx = ex;
-      showSnackBar(thisEx.message);
+      showSnackBar("${ex.message}");
+      // PlatformException thisEx = ex;
+      // showSnackBar(thisEx.message);
     }))
         .user;
 
@@ -88,172 +89,179 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 20, 8, 5),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      alignment: Alignment.bottomLeft,
-                      icon: Icon(Icons.keyboard_arrow_left),
-                      color: Colors.black,
-                      onPressed: () {
-                        // Navigator.pop(context);
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, FirstPage.id, (route) => false);
-                      },
-                    ),
-                  ],
-                ),
-                Container(
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset(
-                        "images/lg.png",
-                        width: 250,
-                        height: 250,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushNamedAndRemoveUntil(
+            context, FirstPage.id, (route) => false);
+        return true;
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 20, 8, 5),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        alignment: Alignment.bottomLeft,
+                        icon: Icon(Icons.keyboard_arrow_left),
+                        color: Colors.black,
+                        onPressed: () {
+                          // Navigator.pop(context);
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, FirstPage.id, (route) => false);
+                        },
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  //height: 20,
-                  color: Colors.white,
-                  child: Text(
-                    "Pet Doctors Login",
-                    style: TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.pink[900]),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.green),
-                            border: InputBorder.none,
-                            hintText: "Email",
-                            icon: Icon(
-                              Icons.email,
-                              color: Colors.green,
-                            )),
-                      ),
+                  Container(
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          "images/lg.png",
+                          width: 250,
+                          height: 250,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: TextFormField(
-                        obscureText: true,
-                        obscuringCharacter: '*',
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.green),
-                            border: InputBorder.none,
-                            hintText: "Password",
-                            icon: Icon(
-                              Icons.lock,
-                              color: Colors.green,
-                            )),
-                      ),
+                  Container(
+                    //height: 20,
+                    color: Colors.white,
+                    child: Text(
+                      "Pet Doctors Login",
+                      style: TextStyle(
+                          fontSize: 25.0,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.pink[900]),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: GestureDetector(
-                    onTap: () async {
-                      //check network connectivity
-                      var connectivityResult =
-                          await Connectivity().checkConnectivity();
-
-                      if (connectivityResult != ConnectivityResult.mobile &&
-                          connectivityResult != ConnectivityResult.wifi) {
-                        showSnackBar('No Internet Connectivity');
-                        return;
-                      }
-
-                      if (!emailController.text.contains('@')) {
-                        showSnackBar('Pease enter a valid Email Address');
-                        return;
-                      }
-
-                      if (passwordController.text.length < 8) {
-                        showSnackBar('Please enter a valid Password');
-
-                        return;
-                      }
-
-                      login();
-                    },
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.pink[800],
+                          border: Border.all(color: Colors.green),
                           borderRadius: BorderRadius.circular(5)),
                       child: Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Login",
-                              style: TextStyle(
+                        padding: EdgeInsets.only(left: 10),
+                        child: TextFormField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                              hintStyle: TextStyle(color: Colors.green),
+                              border: InputBorder.none,
+                              hintText: "Email",
+                              icon: Icon(
+                                Icons.email,
                                 color: Colors.green,
-                                fontSize: 22,
-                              ),
-                            )
-                          ],
+                              )),
                         ),
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, RegistrationPage.id, (route) => false);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: 50),
-                      Text(
-                        "Don't have an account yet? Register here",
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 15,
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: TextFormField(
+                          obscureText: true,
+                          obscuringCharacter: '*',
+                          controller: passwordController,
+                          decoration: InputDecoration(
+                              hintStyle: TextStyle(color: Colors.green),
+                              border: InputBorder.none,
+                              hintText: "Password",
+                              icon: Icon(
+                                Icons.lock,
+                                color: Colors.green,
+                              )),
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: GestureDetector(
+                      onTap: () async {
+                        //check network connectivity
+                        var connectivityResult =
+                            await Connectivity().checkConnectivity();
+
+                        if (connectivityResult != ConnectivityResult.mobile &&
+                            connectivityResult != ConnectivityResult.wifi) {
+                          showSnackBar('No Internet Connectivity');
+                          return;
+                        }
+
+                        if (!emailController.text.contains('@')) {
+                          showSnackBar('Pease enter a valid Email Address');
+                          return;
+                        }
+
+                        if (passwordController.text.length < 8) {
+                          showSnackBar('Please enter a valid Password');
+
+                          return;
+                        }
+
+                        login();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.pink[800],
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Login",
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 22,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, RegistrationPage.id, (route) => false);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: 50),
+                        Text(
+                          "Don't have an account yet? Register here",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

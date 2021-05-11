@@ -1,6 +1,8 @@
 //package io.flutter.plugins.firebasemessagingexample;
 package com.example.cab_driver;
 
+// package io.flutter.plugins.cab_driver;
+
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.PluginRegistrantCallback;
