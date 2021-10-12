@@ -66,12 +66,12 @@ flutter_icons:
   android: "launcher_icon"
   ios: true
   image_path: "images/lg.png"
-  adaptive_icon_background: "images/fore.png"
+  #adaptive_icon_background: "images/fore.png"
   
   
 
 flutter_launcher_name:
-  name: "petambulance"
+  name: "Petambulance Doctor"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

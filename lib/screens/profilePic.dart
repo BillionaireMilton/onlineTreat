@@ -70,7 +70,7 @@ class _ProfilePicState extends State<ProfilePic> {
 
     await doctorRef.update(map);
 
-    if (currentDoctorInfo.role == "Vetinary Doctor") {
+    if (currentDoctorInfo.role == "Veterinary Doctor") {
       Navigator.pushNamedAndRemoveUntil(
           context, DoctorInfoPage.id, (route) => false);
     } else {

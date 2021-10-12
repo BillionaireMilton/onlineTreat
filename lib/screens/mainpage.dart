@@ -34,22 +34,22 @@ class _MainPageState extends State<MainPage>
     });
   }
 
-  // void setupPositionLocator() async {
-  //   Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.bestForNavigation);
-  //   currentPosition = position;
+  void setupPositionLocator() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
+    currentPosition = position;
 
-  //   LatLng pos = LatLng(position.latitude, position.longitude);
-  //   CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
-  //   mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
+    LatLng pos = LatLng(position.latitude, position.longitude);
+    CameraPosition cp = new CameraPosition(target: pos, zoom: 14);
+    mapController.animateCamera(CameraUpdate.newCameraPosition(cp));
 
-  //   // confirm location
-  //   await HelperMethods.findCordinateAddress(position, context);
-  //   // String doctorsAddress =
-  //   //     await HelperMethods.findCordinateAddress(position, context);
+    // confirm location
+    //await HelperMethods.findCordinateAddress(position, context);
+    // String doctorsAddress =
+    //     await HelperMethods.findCordinateAddress(position, context);
 
-  //   //startGeofireListener();
-  // }
+    //startGeofireListener();
+  }
 
   void getCurrentDoctorInfo() async {
     currentFirebaseUser = FirebaseAuth.instance.currentUser;
@@ -97,6 +97,7 @@ class _MainPageState extends State<MainPage>
   void initState() {
     // TODO: implement initState
     super.initState();
+    setupPositionLocator();
     getCurrentDoctorInfo();
     tabController = TabController(length: 2, vsync: this);
   }

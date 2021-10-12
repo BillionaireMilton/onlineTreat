@@ -198,6 +198,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
           "petambulance profile picture.${_imageFile.path.split('.').last}";
     });
   }
+  //com.example.cab_driver
 
   // Choose identification file function
   Future<void> _choosedIdent() async {
@@ -599,7 +600,7 @@ class _DoctorInfoPageState extends State<DoctorInfoPage> {
                                   border: InputBorder.none,
                                   labelStyle: TextStyle(color: Colors.green),
                                   labelText: "VCN",
-                                  hintText: "Vetinary Certification Number",
+                                  hintText: "Veterinary Certification Number",
                                   icon: Icon(
                                     (MaterialIcons.format_list_numbered),
                                     color: Colors.green,

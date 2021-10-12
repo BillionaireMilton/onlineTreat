@@ -56,7 +56,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   ];
 
   List _roleList = [
-    'Vetinary Doctor',
+    'Veterinary Doctor',
     'Animal Health Technologist',
   ];
 

@@ -1,63 +1,33 @@
 {
   "project_info": {
-    "project_number": "288225958127",
-    "firebase_url": "https://pet-ambulance-app-default-rtdb.firebaseio.com",
-    "project_id": "pet-ambulance-app",
-    "storage_bucket": "pet-ambulance-app.appspot.com"
+    "project_number": "709215467433",
+    "project_id": "pet-amb",
+    "storage_bucket": "pet-amb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:288225958127:android:c50eef1c6173e26ca6e31a",
+        "mobilesdk_app_id": "1:709215467433:android:c1d57a9d8f598b53a776b8",
         "android_client_info": {
-          "package_name": "com.example.cab_driver"
+          "package_name": "com.milton_intelligence.doctor"
         }
       },
       "oauth_client": [
         {
-          "client_id": "288225958127-tmin3h1rrpmhpicqj7frpqs4ol8e5vgc.apps.googleusercontent.com",
+          "client_id": "709215467433-1ki5tt5eefj3slim1qndnr2hfm2q6ei8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM"
+          "current_key": "AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "288225958127-tmin3h1rrpmhpicqj7frpqs4ol8e5vgc.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:288225958127:android:7c45c1c688ccc0aaa6e31a",
-        "android_client_info": {
-          "package_name": "com.example.cabby"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "288225958127-tmin3h1rrpmhpicqj7frpqs4ol8e5vgc.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "288225958127-tmin3h1rrpmhpicqj7frpqs4ol8e5vgc.apps.googleusercontent.com",
+              "client_id": "709215467433-1ki5tt5eefj3slim1qndnr2hfm2q6ei8.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

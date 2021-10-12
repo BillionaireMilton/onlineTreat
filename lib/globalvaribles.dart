@@ -8,13 +8,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 User currentFirebaseUser;
 
+Completer<GoogleMapController> _controller = Completer();
+
 // ignore: non_constant_identifier_names
 final CameraPosition GooglePlex = CameraPosition(
   target: LatLng(37.42796133580664, -122.085749655962),
   zoom: 14.4746,
 );
 
-String mapKey = 'AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM';
+String mapKey = 'AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ';
 
 StreamSubscription<Position> homeTabPositionStream;
 

@@ -651,7 +651,7 @@ class _TecInfoPageState extends State<TecInfoPage> {
                                   border: InputBorder.none,
                                   labelStyle: TextStyle(color: Colors.green),
                                   labelText: "VCN",
-                                  hintText: "Vetinary Certification Number",
+                                  hintText: "Veterinary Certification Number",
                                   icon: Icon(
                                     (MaterialIcons.format_list_numbered),
                                     color: Colors.green,

@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 //   static Future<DirectionDetails> getDirectionDetails(
 //       LatLng startPosition, LatLng endPosition) async {
 //     String url =
-//         'https://maps.googleapis.com/maps/api/directions/json?origin=${startPosition.latitude},${startPosition.longitude}&destination=${endPosition.latitude},${endPosition.longitude}&mode=driving&key=AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM';
+//         'https://maps.googleapis.com/maps/api/directions/json?origin=${startPosition.latitude},${startPosition.longitude}&destination=${endPosition.latitude},${endPosition.longitude}&mode=driving&key=AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ';
 //     print('URL: ${url}');
 //     var response = await RequestHelper.getRequest(url);
 //
@@ -119,7 +119,7 @@ class HelperMethods {
     }
 
     String url =
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM';
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ';
 
     var response = await RequestHelper.getRequest(url);
     print(response);
@@ -147,7 +147,7 @@ class HelperMethods {
   static Future<DirectionDetails> getDirectionDetails(
       LatLng startPosition, LatLng endPosition) async {
     String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=${startPosition.latitude},${startPosition.longitude}&destination=${endPosition.latitude},${endPosition.longitude}&mode=driving&key=AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=${startPosition.latitude},${startPosition.longitude}&destination=${endPosition.latitude},${endPosition.longitude}&mode=driving&key=AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ';
 
     var response = await RequestHelper.getRequest(url);
 

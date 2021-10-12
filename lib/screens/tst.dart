@@ -459,7 +459,7 @@ class _HomeTabsState extends State<HomeTabs> {
                       ListTile(
                         leading: Icon(OMIcons.info),
                         title: Text(
-                          'About',
+                          'About Petambulance',
                           style: TextStyle(
                             fontSize: 16,
                           ),

@@ -55,6 +55,19 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
+  Future<void> _launchInWebViewWithJavaScript(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: true,
+        forceWebView: true,
+        enableJavaScript: true,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   Future<void> _launched;
 
   Future<bool> _onBackPressed() {
@@ -111,6 +124,7 @@ class _HomeTabState extends State<HomeTab> {
         desiredAccuracy: LocationAccuracy.bestForNavigation);
     currentPosition = position;
     LatLng pos = LatLng(position.latitude, position.longitude);
+    //final GoogleMapController mapController = await _controller.future;
     mapController.animateCamera(CameraUpdate.newLatLng(pos));
   }
 
@@ -155,6 +169,7 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
     getCurrentDoctorInfo();
     getCurrentPosition();
+    WidgetsBinding.instance.addPostFrameCallback((_) => getCurrentPosition());
   }
 
   var bodyProgress = new Container(
@@ -205,7 +220,9 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    getCurrentPosition();
     const String about = 'https://www.petambulance.ng/about';
+    const String store = 'http://www.petambulance.ng/store';
     //getCurrentPosition();
     // getLocationUpdates();
     return WillPopScope(
@@ -214,6 +231,7 @@ class _HomeTabState extends State<HomeTab> {
           future: getCurrentDoctorInfo(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
+              getCurrentPosition();
               return Scaffold(
                 key: scaffoldKey,
                 drawer: Container(
@@ -317,10 +335,26 @@ class _HomeTabState extends State<HomeTab> {
                             // changeScreenReplacement(context, LoginScreen());
                           },
                         ),
+
+                        ListTile(
+                          leading: Icon(OMIcons.store),
+                          title: Text(
+                            'My Store',
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _launched = _launchInWebViewWithJavaScript(store);
+                            });
+                          },
+                        ),
+
                         ListTile(
                           leading: Icon(OMIcons.info),
                           title: Text(
-                            'About',
+                            'About Petambulance',
                             style: TextStyle(
                               fontSize: 16,
                             ),
@@ -557,6 +591,7 @@ class _HomeTabState extends State<HomeTab> {
     treatmentRequestRef.set('waiting');
 
     treatmentRequestRef.onValue.listen((event) {});
+    getLocationUpdates();
   }
 
   void GoOffline() {
@@ -567,6 +602,7 @@ class _HomeTabState extends State<HomeTab> {
     treatmentRequestRef.onDisconnect();
     treatmentRequestRef.remove();
     treatmentRequestRef = null;
+    getLocationUpdates();
   }
 
   void getLocationUpdates() {

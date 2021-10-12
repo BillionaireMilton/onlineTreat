@@ -1,7 +1,7 @@
 //package io.flutter.plugins.firebasemessagingexample;
-package com.example.cab_driver;
+package com.milton_intelligence.doctor;
 
-// package io.flutter.plugins.cab_driver;
+// package io.flutter.plugins.doctor;
 
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.PluginRegistry;

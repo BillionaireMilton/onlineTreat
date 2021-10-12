@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cab_driver/screens/reset.dart';
+
 import 'dataprovider.dart';
 import 'globalvaribles.dart';
 import 'screens/historypage.dart';
@@ -33,18 +35,17 @@ Future<void> main() async {
     options: Platform.isIOS || Platform.isMacOS
         ? FirebaseOptions(
             appId: '1:297855924061:ios:c6de2b69b03a5be8',
-            apiKey: 'AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM',
+            apiKey: 'AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ',
             projectId: 'flutter-firebase-plugins',
             messagingSenderId: '297855924061',
             databaseURL: 'https://flutterfire-cd2f7.firebaseio.com',
           )
         : FirebaseOptions(
-            appId: '1:288225958127:android:c50eef1c6173e26ca6e31a',
-            apiKey: 'AIzaSyC5c20n0oaT8uJmipXgITc91H7TnlZSofM',
-            messagingSenderId: '288225958127',
-            projectId: 'pet-ambulance-app',
-            databaseURL:
-                'https://pet-ambulance-app-default-rtdb.firebaseio.com',
+            appId: '1:709215467433:android:c1d57a9d8f598b53a776b8',
+            apiKey: 'AIzaSyDjkvF86Dthiwx8UxsttoW6qZAdb1wlYZQ',
+            messagingSenderId: '709215467433',
+            projectId: 'pet-amb',
+            databaseURL: 'https://pet-amb-default-rtdb.firebaseio.com/',
           ),
   );
 
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
             NewTreatmentPage.id: (context) => NewTreatmentPage(),
             ProfilePic.id: (context) => ProfilePic(),
             HistoryPage.id: (context) => HistoryPage(),
+            ResetPasswordPage.id: (context) => ResetPasswordPage(),
           },
         ));
   }

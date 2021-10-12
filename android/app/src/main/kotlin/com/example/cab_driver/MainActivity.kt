@@ -1,4 +1,4 @@
-package com.example.cab_driver
+package com.milton_intelligence.doctor
 
 import io.flutter.embedding.android.FlutterActivity
 

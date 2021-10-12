@@ -1,25 +1,25 @@
-import '../screens/registration.dart';
+import 'package:cab_driver/screens/login.dart';
+
+import 'registration.dart';
 import '../widgets/ProgressDialog.dart';
 import '../widgets/TaxiButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import '../screens/roleLog.dart';
+import '../brand_colors.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../screens/mainpage.dart';
+import 'mainpage.dart';
 import 'package:flutter/services.dart';
-import 'package:cab_driver/screens/reset.dart';
-import 'firstpage.dart';
 
-class LoginPage extends StatefulWidget {
-  static const String id = 'login';
+class ResetPasswordPage extends StatefulWidget {
+  static const String id = 'ResetPassword';
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   void showSnackBar(String title) {
@@ -34,67 +34,36 @@ class _LoginPageState extends State<LoginPage> {
     scaffoldKey.currentState.showSnackBar(snackbar);
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit Pet Ambulance'),
+            actions: <Widget>[
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(false),
+                child: Text("NO"),
+              ),
+              SizedBox(height: 16),
+              new GestureDetector(
+                onTap: () => Navigator.of(context).pop(true),
+                child: Text("YES"),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   var emailController = TextEditingController();
 
-  var passwordController = TextEditingController();
-
-  void login() async {
-    //showing progressDialog
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) => ProgressDialog(
-        status: 'Logging you in',
-      ),
-    );
-
-    final User user = (await _auth
-            .signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    )
-            .catchError((ex) {
-      //check error and display message
-      Navigator.pop(context);
-      showSnackBar("${ex.message}");
-      // PlatformException thisEx = ex;
-      // showSnackBar(thisEx.message);
-    }))
-        .user;
-
-    if (user != null) {
-      //verify login
-      DatabaseReference userRef =
-          FirebaseDatabase.instance.reference().child('doctors/${user.uid}');
-
-      userRef.once().then((DataSnapshot snapshot) {
-        if (snapshot.value != null) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, MainPage.id, (route) => false);
-        } else {
-          _auth.signOut();
-          showSnackBar(
-              'No record exist for this user. Please create an account');
-          Navigator.pop(context);
-          // Navigator.pushNamedAndRemoveUntil(
-          //     context, LoginPage.id, (route) => false);
-          // showSnackBar(
-          //     'No record exist for this user. Please create an account');
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushNamedAndRemoveUntil(
-            context, FirstPage.id, (route) => false);
-        return true;
-      },
+      onWillPop: _onBackPressed,
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.white,
@@ -104,19 +73,9 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.fromLTRB(8, 20, 8, 5),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        alignment: Alignment.bottomLeft,
-                        icon: Icon(Icons.keyboard_arrow_left),
-                        color: Colors.black,
-                        onPressed: () {
-                          // Navigator.pop(context);
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, FirstPage.id, (route) => false);
-                        },
-                      ),
-                    ],
+                  Container(
+                    color: Colors.white,
+                    height: 100,
                   ),
                   Container(
                     color: Colors.white,
@@ -135,9 +94,9 @@ class _LoginPageState extends State<LoginPage> {
                     //height: 20,
                     color: Colors.white,
                     child: Text(
-                      "Pet Doctors Login",
+                      "Reset Your Password",
                       style: TextStyle(
-                          fontSize: 25.0,
+                          fontSize: 20.0,
                           fontWeight: FontWeight.w900,
                           color: Colors.pink[900]),
                     ),
@@ -159,33 +118,9 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                               hintStyle: TextStyle(color: Colors.green),
                               border: InputBorder.none,
-                              hintText: "Email",
+                              hintText: "Enter Your Registered Email",
                               icon: Icon(
                                 Icons.email,
-                                color: Colors.green,
-                              )),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: TextFormField(
-                          obscureText: true,
-                          obscuringCharacter: '*',
-                          controller: passwordController,
-                          decoration: InputDecoration(
-                              hintStyle: TextStyle(color: Colors.green),
-                              border: InputBorder.none,
-                              hintText: "Password",
-                              icon: Icon(
-                                Icons.lock,
                                 color: Colors.green,
                               )),
                         ),
@@ -211,13 +146,26 @@ class _LoginPageState extends State<LoginPage> {
                           return;
                         }
 
-                        if (passwordController.text.length < 8) {
-                          showSnackBar('Please enter a valid Password');
+                        _auth.sendPasswordResetEmail(
+                            email: emailController.text);
 
-                          return;
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) => new AlertDialog(
+                            title: new Text('Pet Ambulance'),
+                            content: new Text(
+                                'A password reset link has been sent to your email, kindly check mail to reset password'),
+                            actions: <Widget>[
+                              //SizedBox(height: 16),
+                              new GestureDetector(
+                                onTap: () => Navigator.of(context).pop(true),
+                                child: Text("OK"),
+                              ),
+                            ],
+                          ),
+                        );
 
-                        login();
+                        //Navigator.of(context).pop();
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -229,12 +177,12 @@ class _LoginPageState extends State<LoginPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                "Login",
+                                "Reset Password",
                                 style: TextStyle(
                                   color: Colors.green,
-                                  fontSize: 22,
+                                  fontSize: 20,
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -244,26 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamedAndRemoveUntil(
-                          context, RegistrationPage.id, (route) => false);
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: 50),
-                        Text(
-                          "Don't have an account yet? Register here",
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, ResetPasswordPage.id, (route) => false);
+                          context, LoginPage.id, (route) => false);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +201,7 @@ class _LoginPageState extends State<LoginPage> {
                         Column(
                           children: [
                             Text(
-                              "Forgot Password?",
+                              "Go back to log in",
                               style: TextStyle(
                                 color: Colors.green,
                                 fontSize: 15,
